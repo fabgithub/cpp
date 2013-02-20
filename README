@@ -1,0 +1,29 @@
+Tetris Game // This one is under development (ported from the shell one) 
+            // Just enjoy the one developed in shell to get the full features 
+            // As it's pretty good
+===============================================================================
+
+#####################################################################
+#                                                                   #
+# License: Boost Ver 1.0+                                           #
+# Project: https://github.com/yongye/cpp                            #
+# Project: https://github.com/yongye/shell                          #
+# Author : YongYe <complex.invoke@gmail.com>                        #
+#                                                                   #
+#####################################################################
+
+Compile the source code :
+   g++ -std=c++11 -s -l boost_thread-mt -o Tetris_Game Tetris_Game.cpp 
+
+Run the game :
+   Usage: ./Tetris_Game [runlevel] [previewlevel] [speedlevel]
+   Range: [ 0 =< runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 8 ]
+   Notice: runlevel previewlevel speedlevel belong to integer
+
+Tested Platform : 
+   [root@node ~]# cat /etc/redhat-release 
+   Fedora release 18 (Spherical Cow)
+   [root@node ~]# uname -a
+   Linux node 3.7.5-201.fc18.x86_64 #1 SMP Mon Jan 28 19:54:41 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+   [root@node ~]# g++ --version | grep g++
+   g++ (GCC) 4.7.2 20121109 (Red Hat 4.7.2-8)
