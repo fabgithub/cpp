@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0 02/20/2013 BeiJing China [Updated 02/20/2013]                           //
+//   Version: 1.0.0.1 02/20/2013 BeiJing China [Updated 03/03/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -163,7 +163,7 @@ int get_args(vector<string>& args)
                 }
                 else if ( str == "-v" || str == "--version" )
                 {
-                     cout<<"Tetris Game  Version 1.0.0 [Updated 02/20/2013]"<<endl;
+                     cout<<"Tetris Game  Version 1.0.0.1 [Updated 03/03/2013]"<<endl;
                      return 1;
                 }
                 else
@@ -180,7 +180,6 @@ class piece
 {
    public:
       piece();
-      void ghost_cross();
       void board();
       int persig();
       int getsig();
@@ -191,6 +190,7 @@ class piece
       void clear_row();
       int drop_bottom();
       void init_color();
+      void ghost_cross();
       void random_piece();
       void get_invoke(int);
       void show_piece(int);
@@ -227,10 +227,11 @@ class piece
       int line=0;
       int count=0;
       bool full=true;
-      vector<vector<int>> next_preview_piece;
-      vector<int> box, box_map, preview_box, locus;
+      vector<vector<string>> box_color;
+      vector<int> box, preview_box, locus;
+      vector<vector<int>> box_map, next_preview_piece;
+      vector<string> old_preview_block, next_preview_color, color;
       string cur_shadow, cur_color, old_shadow, cur_preview_block;
-      vector<string> old_preview_block, next_preview_color, box_color, color;
 };
 
 int main(int argc, char* argv[])
@@ -293,8 +294,14 @@ piece::piece()
    runlevel=(runlevel < 0 || runlevel > 31)?32:runlevel+1;            
    end=prelevel-1;
    vector<int> v;
-   box_map.assign(750, 0);
-   box_color.assign(750, "");
+   vector<string> u;
+   box_map.assign(30, v);
+   box_color.assign(30, u);
+   for (int i=0; i!=30; ++i)
+   {
+        box_map[i].assign(25, 0);
+        box_color[i].assign(25, "");
+   }
    old_preview_block.assign(prelevel,"");
    next_preview_color.assign(prelevel,"");
    for (int i=0; i!=prelevel; ++i) 
@@ -311,16 +318,16 @@ piece::piece()
 
 void piece::check(int i, int j, int index)
 { 
-   if ( ! box_map[index] ) full=false; 
+   if ( ! box_map[i-4][j/2-3] ) full=false; 
 }
 
 void piece::update(int i, int j, int index)
 { 
    string pos="\e["+to_string(i)+";"+to_string(j)+"H";
-   if ( ! box_map[index] ) 
+   if ( ! box_map[i-4][j/2-3] ) 
         cout<<pos+"  ";
    else
-        cout<<pos+"\e["+box_color[index]+unit+"\e[0m";
+        cout<<pos+"\e["+box_color[i-4][j/2-toph]+unit+"\e[0m";
 }
 
 int piece::drop_bottom()
@@ -346,7 +353,7 @@ int piece::drop_bottom()
    
    for (int i=0, j=0; i!=height; j+=2)
    { 
-        if (box_map[(max[j]+i-toph-1)*width+max[j+1]/2-toph] == 1) return i-1;
+        if (box_map[max[j]+i-4][max[j+1]/2-toph] == 1) return i-1;
         if (max[j]+i == lower) return i;
         if (j+2 == max.size())
         { 
@@ -366,8 +373,8 @@ vector<int>& piece::get_piece()
 
 void piece::init(int i, int j, int index)
 { 
-   box_map[index]=0;
-   box_color[index]=""; 
+   box_map[i-4][j/2-3]=0;
+   box_color[i-4][j/2-3]=""; 
 }
 
 void piece::init_color()
@@ -421,16 +428,12 @@ string& piece::get_replace(string& src)
 void piece::map_piece(int i, int l)
 {
    ++line;
-   for(int j=i-1,u=6; j>=toph+1; u+=2)
+   for(int j=i-1; j>=toph+1; --j)
    {
-       int p=(j-toph)*width+u/2-toph; 
-       int q=p-width;
-       box_color[p]=box_color[q];
-       box_map[p]=box_map[q]; 
-       if ( u == l ) { u=4; --j; }
+       box_color[j-3]=box_color[j-4];
+       box_map[j-3]=box_map[j-4]; 
    }
-   for(int u=6; u<=l; u+=2)  
-       box_map[u/2-toph]=0;
+   box_map[0].assign(25, 0);
 }
 
 void piece::get_preview(vector<int>& box0, string& old_block, int n, string& new_block_color)
@@ -525,8 +528,8 @@ void piece::random_piece()
         if ( j == 54 ) { j=4; ++i; }
         if ( rnd()%2 ) 
         { 
-            box_map[k]=1; 
-            box_color[k]=color[rnd()%color.size()];
+            box_map[33-i][j/2-3]=1; 
+            box_color[33-i][j/2-3]=color[rnd()%color.size()];
         }
    }
    if ( count == 29 ) count=0;
@@ -573,9 +576,9 @@ void piece::runbomb(int x, int y, int size)
         bool boolq=(q <= wthm && q > modw);
         if ( boolp && boolq )
         {
-             if ( ! box_map[index] && p+q != x+y && size != 8 ) continue;
+             if ( ! box_map[p-4][q/2-3] && p+q != x+y && size != 8 ) continue;
               empty+="\e["+to_string(p)+";"+to_string(q)+"H"+"\040\040";
-              init(0,0,index); 
+              init(p,q,0); 
         }
    }
    wait(0);
@@ -598,8 +601,8 @@ void piece::clear_row()
         else
         {
             int index=(x-4)*width+y/2-toph;
-            box_map[index]=1;
-            box_color[index]=cur_color;
+            box_map[x-4][y/2-3]=1;
+            box_color[x-4][y/2-3]=cur_color;
         }
    }
    line=0;
@@ -728,13 +731,13 @@ int piece::move_piece(double dx, int dy)
         bool boolx=(x <= toph || x > lower);
         bool booly=(y > wthm || y <= modw);
         if ( boolx || booly ) return 0;
-        if ( box_map[index] )
+        if ( box_map[x-4][y/2-3] )
         {
              if ( len == 2 )
              {
                     for (int j=lower; j>x; --j)
                     {
-                         if ( ! box_map[(j-4)*width+y/2-toph] ) return 1;
+                         if ( ! box_map[j-4][y/2-toph] ) return 1;
                     }
              }
              return 0;
@@ -748,7 +751,7 @@ void piece::ghost_cross()
    int i=locus[0];
    int j=locus[1];
    int index=(i-4)*width+j/2-toph;
-   if ( box_map[index] ) cout<<"\e["+to_string(i)+";"+to_string(j)+"H\e["+box_color[index]+unit+"\e[0m\n";
+   if ( box_map[i-4][j/2-toph] ) cout<<"\e["+to_string(i)+";"+to_string(j)+"H\e["+box_color[i-4][j/2-toph]+unit+"\e[0m\n";
 }
 
 void piece::optimize(vector<int>& new_box, initializer_list<int> ink)
@@ -919,9 +922,9 @@ void piece::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.1\n";
    string str5="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str6=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 02/20/2013]\n";
+   string str6=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/03/2013]\n";
    cout<<str5+str6;
 }
 
