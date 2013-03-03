@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0.3 02/20/2013 BeiJing China [Updated 03/03/2013]                         //
+//   Version: 1.0.0.4 02/20/2013 BeiJing China [Updated 03/03/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -163,7 +163,7 @@ int get_args(vector<string>& args)
                 }
                 else if ( str == "-v" || str == "--version" )
                 {
-                     cout<<"Tetris Game  Version 1.0.0.3 [Updated 03/03/2013]"<<endl;
+                     cout<<"Tetris Game  Version 1.0.0.4 [Updated 03/03/2013]"<<endl;
                      return 1;
                 }
                 else
@@ -899,24 +899,28 @@ void piece::board()
 
 void piece::notify()
 {
-   string str1="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+49)+"H"+to_string(scorelevel);
-   string str2="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+30)+"H"+to_string(speedlevel)+"\e[0m\n";
-   cout<<str1+str2;
-   string str3="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist)+"H"+to_string(runlevel-1);
-   string str4="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+15)+"H"+to_string(prelevel)+"\e[0m\n";
-   cout<<str3+str4;
-   cout<<"\e[1;31m\e["+to_string(toph+9)+";"+to_string(dist)+"HRunLevel\e[1;31m\e["+to_string(toph+9)+";"+to_string(dist+15)+"HPreviewLevel\e[0m\n";
-   cout<<"\e[1;31m\e["+to_string(toph+9)+";"+to_string(dist+30)+"HSpeedLevel\e[1;31m\e["+to_string(toph+9)+";"+to_string(dist+49)+"HScoreLevel\e[0m\n";
+   string str0="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+49)+"H"+to_string(scorelevel);
+   string str1="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+30)+"H"+to_string(speedlevel)+"\e[0m";
+   cout<<str0+str1<<endl;
+   string str2="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist)+"H"+to_string(runlevel-1);
+   string str3="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+15)+"H"+to_string(prelevel)+"\e[0m";
+   cout<<str2+str3<<endl;
+   string str4="\e[1;31m\e["+to_string(toph+9)+";"+to_string(dist)+"HRunLevel\e[1;31m\e[";
+   string str5=to_string(toph+9)+";"+to_string(dist+15)+"HPreviewLevel\e[0m";
+   cout<<str4+str5<<endl;
+   string str6="\e[1;31m\e["+to_string(toph+9)+";"+to_string(dist+30)+"HSpeedLevel\e[1;31m\e[";
+   string str7=to_string(toph+9)+";"+to_string(dist+49)+"HScoreLevel\e[0m";
+   cout<<str6+str7<<endl;
    cout<<"\e[38;5;34;1m\e["+to_string(toph+12)+";"+to_string(dist)+"HM|m      ===   double         N|n          ===   half\n";
    cout<<"\e["+to_string(toph+13)+";"+to_string(dist)+"HQ|q|ESC  ===   exit           U|u          ===   one step up\n";
    cout<<"\e["+to_string(toph+14)+";"+to_string(dist)+"HP|p      ===   pause          S|s|down     ===   one step down\n";
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.3\n";
-   string str5="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str6=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/03/2013]\n";
-   cout<<str5+str6;
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.4\n";
+   string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/03/2013]";
+   cout<<str8+str9<<endl;
 }
 
 void piece::matrix()
@@ -953,8 +957,10 @@ void piece::matrix()
    cout<<"\e["+to_string(toph+25)+";"+to_string(dist)+"H"+fk7+fk1+spc+tre+fk1+two+fk0+tre+fk1+one+fk1<<endl;
    cout<<"\e["+to_string(toph+26)+";"+to_string(dist)+"H"+fk8+fk0+fk4+fk11+"\e["+to_string(toph+28)+";"+to_string(dist)+"H"+fk0+fk12+fk0+fk13<<endl;
    cout<<"\e["+to_string(toph+24)+";"+to_string(dist)+"H"+two+spc+fk0+spc+tre+two+tre+fk6+fk5+cps+fk0+fk4<<endl;
-   cout<<"\e["+to_string(toph+22)+";"+to_string(dist)+"H"+tre+fk5+fk5+fk5+fk6+"\e["+to_string(toph+29)+";"+to_string(dist)+"H"+fk14+fk1+spc+tre+fk15<<endl;
-   string str0="\e["+to_string(toph+27)+";"+to_string(dist)+"H"+fk0+cps+fk0+fk9+fk0+fk10;
-   string str1="\e["+to_string(toph+31)+";"+to_string(dist)+"H"+spc+two+fk2+fk5+fk5+" "+fk2;
+   string str0="\e["+to_string(toph+22)+";"+to_string(dist)+"H"+tre+fk5+fk5+fk5+fk6+"\e[";
+   string str1=to_string(toph+29)+";"+to_string(dist)+"H"+fk14+fk1+spc+tre+fk15;
    cout<<str0+str1<<endl;
+   string str2="\e["+to_string(toph+27)+";"+to_string(dist)+"H"+fk0+cps+fk0+fk9+fk0+fk10;
+   string str3="\e["+to_string(toph+31)+";"+to_string(dist)+"H"+spc+two+fk2+fk5+fk5+" "+fk2;
+   cout<<str2+str3<<endl;
 }
