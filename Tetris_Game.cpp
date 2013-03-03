@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0.2 02/20/2013 BeiJing China [Updated 03/03/2013]                         //
+//   Version: 1.0.0.3 02/20/2013 BeiJing China [Updated 03/03/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -163,7 +163,7 @@ int get_args(vector<string>& args)
                 }
                 else if ( str == "-v" || str == "--version" )
                 {
-                     cout<<"Tetris Game  Version 1.0.0.2 [Updated 03/03/2013]"<<endl;
+                     cout<<"Tetris Game  Version 1.0.0.3 [Updated 03/03/2013]"<<endl;
                      return 1;
                 }
                 else
@@ -191,6 +191,7 @@ class piece
       int drop_bottom();
       void init_color();
       void ghost_cross();
+      void map_piece(int);
       void init(int, int);
       void random_piece();
       void check(int, int);
@@ -200,7 +201,6 @@ class piece
       void perplus(int, int);
       vector<int>& get_piece();
       void move(double&, int&);
-      void map_piece(int);
       void rotate(double&, int&);
       int move_piece(double, int);
       void coordinate(vector<int>&);
@@ -219,9 +219,9 @@ class piece
       void optimize(vector<int>&, initializer_list<int>);
       void get_preview(vector<int>&, string&, int, string&);
       void abstract(vector<int>&, vector<int>&, int&, int&, double);
+      void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
       void coordinate_transformation(vector<int>&, vector<int>&, double, int, int);
       void pipe_piece(vector<int>&, vector<int>&, string&, int, int, string&, string&);
-      void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
    protected:
       int end=0;
       int line=0;
@@ -242,10 +242,7 @@ int main(int argc, char* argv[])
    get_time time;
    thread t0{&get_time::current, &time};
    thread t1{&piece::persig, &pg};
-   thread t2{&piece::getsig, &pg};
-   t0.join();
-   t1.join();
-   t2.join();
+   pg.getsig();
 }
 
 void get_time::set_time(int& lhs, int& rhs, int value)
@@ -916,7 +913,7 @@ void piece::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.2\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.3\n";
    string str5="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
    string str6=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/03/2013]\n";
    cout<<str5+str6;
