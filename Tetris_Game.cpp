@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0.5 02/20/2013 BeiJing China [Updated 03/04/2013]                         //
+//   Version: 1.0.0.6 02/20/2013 BeiJing China [Updated 03/12/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -163,7 +163,7 @@ int get_args(vector<string>& args)
                 }
                 else if ( str == "-v" || str == "--version" )
                 {
-                     cout<<"Tetris Game  Version 1.0.0.5 [Updated 03/04/2013]"<<endl;
+                     cout<<"Tetris Game  Version 1.0.0.6 [Updated 03/12/2013]"<<endl;
                      return 1;
                 }
                 else
@@ -213,12 +213,12 @@ class piece
       void runbomb(int x, int y, int size);
       void coord_comp(int&, int&, int&, int&);
       tuple<int, int> mid_point(vector<int>&);
-      vector<int> multiple(vector<int>&, double);
+      vector<int> multiple(vector<int>&, int, int);
       void get_point(vector<int>&, int&, int&, int);
       void midplus(vector<int>&, int, int, int, int);
       void optimize(vector<int>&, initializer_list<int>);
       void get_preview(vector<int>&, string&, int, string&);
-      void abstract(vector<int>&, vector<int>&, int&, int&, double);
+      void abstract(vector<int>&, vector<int>&, int&, int&, int, int);
       void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
       void coordinate_transformation(vector<int>&, vector<int>&, double, int, int);
       void pipe_piece(vector<int>&, vector<int>&, string&, int, int, string&, string&);
@@ -520,7 +520,6 @@ void piece::random_piece()
    ++count;
    for (int i=0,j=6; i!=count; j+=2)
    {
-        int k=(29-i)*25+j/2-3;
         if ( j == 54 ) { j=4; ++i; }
         if ( rnd()%2 ) 
         { 
@@ -626,7 +625,7 @@ int piece::persig()
             case 23 : transform(-1   );           break;
             case 24 : transform(1    );           break;
             case 25 : transform(-2   );           break;
-            case 26 : transform(1/2  );           break;
+            case 26 : transform(0.5  );           break;
             case 27 : transform(0, -2);           break;
             case 28 : transform(0,  2);           break;
             case 29 : transform(1,  0);           break;
@@ -795,12 +794,12 @@ void piece::move(double& dx, int& dy)
    } 
 }
 
-vector<int> piece::multiple(vector<int>& dim, double k)
+vector<int> piece::multiple(vector<int>& dim, int b, int d)
 {
    vector<int> mid(dim);
    for (int i=0; i!=mid.size()-2; i+=2)
    {
-        mid[i+3]=mid[i+1]+(dim[i+3]-dim[i+1])*k;
+        mid[i+3]=mid[i+1]+(dim[i+3]-dim[i+1])*b/d;
    }
    return mid;
 }
@@ -841,9 +840,9 @@ void piece::midplus(vector<int>& new_box, int mp, int p, int nq, int q)
    optimize(new_box, {dx, dy});
 }
 
-void piece::abstract(vector<int>& pix, vector<int>& new_box, int& i, int& j, double k)
+void piece::abstract(vector<int>& pix, vector<int>& new_box, int& i, int& j, int b, int d)
 {
-   new_box=multiple(pix, k);
+   new_box=multiple(pix, b, d);
    tie(i, j)=mid_point(new_box);
 }
 
@@ -852,10 +851,10 @@ void piece::rotate(double& dx, int& dy)
    int m,n,p,q,mp,nq;
    vector<int> new_coordinate, new_box;
    tie(mp,nq)=mid_point(box); 
-   abstract(box, new_box, m, n, 0.5);
+   abstract(box, new_box, m, n, 1, 2);
    coordinate_transformation(new_coordinate, new_box, dx, m, n); 
    dx=dy=0;
-   abstract(new_coordinate, new_box, p, q, 2);
+   abstract(new_coordinate, new_box, p, q, 2, 1);
    midplus(new_box, mp, p, nq, q); 
    locus=new_box;
    if (move_piece(dx, dy))
@@ -917,9 +916,9 @@ void piece::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.5\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.6\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/04/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/12/2013]";
    cout<<str8+str9<<endl;
 }
 
