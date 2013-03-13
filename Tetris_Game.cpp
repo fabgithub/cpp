@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0.6 02/20/2013 BeiJing China [Updated 03/12/2013]                         //
+//   Version: 1.0.0.7 02/20/2013 BeiJing China [Updated 03/13/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -72,20 +72,20 @@ const int box31[34] {4, 30, 5, 28, 6, 26, 6, 34, 7, 28, 7, 32, 7, 36, 8, 22, 8, 
 const int length[32] {2, 4, 4, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 16, 18, 26, 26, 34, 34};
 const int* BOX[32] {box0, box1, box2, box3, box4, box5, box6, box7, box8, box9, box10, box11, box12, box13, box14, box15, box16, box17, box18, 
                     box19, box20, box21, box22, box23, box24, box25, box26, box27, box28, box29, box30, box31};
+const int toph=3;
+const int modw=4;
+random_device rnd;
+atomic<int> sig(0);
+int width=25;
+int height=30;
 int prelevel=6;
 int runlevel=31;
 int speedlevel=0;
 int scorelevel=0;
-const int toph=3;
-const int modw=5;
-const int wthm=55;
-random_device rnd;
-atomic<int> sig(0);
-const int dist=61;
-const int width=25;
-const int lower=33;
-const int height=30;
+int wthm=2*width+modw;
+int dist=modw+wthm+3;
 const string unit="[]";
+int lower=height+toph;
 const string gmover="\e[?25h\e[36;26HGame Over!\e[0m\n";
 
 static struct termios oldt;
@@ -140,7 +140,7 @@ class get_time
       int second=0;
       map<int, string> time;
       string color="\e[1;33m";
-      string line="----------------";
+      string line="";
 };
 
 int get_args(vector<string>& args)
@@ -148,6 +148,15 @@ int get_args(vector<string>& args)
    int args_len=args.size();
    switch (args_len)
    { 
+      case 6: width=stoi(args[4]);
+              height=stoi(args[5]);
+              runlevel=stoi(args[1]);
+              prelevel=stoi(args[2]); 
+              speedlevel=stoi(args[3]); return 0;
+      case 5: width=stoi(args[4]);
+              runlevel=stoi(args[1]);
+              prelevel=stoi(args[2]); 
+              speedlevel=stoi(args[3]); return 0;
       case 4: runlevel=stoi(args[1]);
               prelevel=stoi(args[2]); 
               speedlevel=stoi(args[3]); return 0;
@@ -157,13 +166,13 @@ int get_args(vector<string>& args)
                 string str=args[1]; 
                 if ( str == "-h" || str == "--help") 
                 {
-                     cout<<"Usage: "<<args[0]<<" [runlevel] [previewlevel] [speedlevel]"<<endl;
-                     cout<<"Range: [ 0 =< runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 8 ]"<<endl;
+                     cout<<"Usage: "<<args[0]<<" [runlevel] [previewlevel] [speedlevel] [width] [height]"<<endl;
+                     cout<<"Range: [ 0 =< runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 30 ]   [ width >= 17 ]   [ height>= 10 ]"<<endl;
                      return 1;
                 }
                 else if ( str == "-v" || str == "--version" )
                 {
-                     cout<<"Tetris Game  Version 1.0.0.6 [Updated 03/12/2013]"<<endl;
+                     cout<<"Tetris Game  Version 1.0.0.7 [Updated 03/13/2013]"<<endl;
                      return 1;
                 }
                 else
@@ -266,7 +275,9 @@ void get_time::resize(initializer_list<int> dhms)
 
 void get_time::current()
 {
-   cout<<"\e[2;6H"+color+line+"[\e[2;39H"+color+"]"+line+"\e[0m\n";
+   int j=width-9;
+   for(int k=0; k!=j; ++k) line+='-';
+   cout<<"\e[2;6H"+color+line+"[\e[2;"+to_string(23+j)+"H"+color+"]"+line+"\e[0m\n";
    while (true)
    {
          if ( sig == 22 ) { runleave(0); break; }
@@ -277,7 +288,7 @@ void get_time::current()
          set_time(hour, day, 24);
          time[day]=day;
          resize({day, hour, minute, second});
-         cout<<"\e[2;23H"+color+"Time "+time[day]+":"+time[hour]+":"+time[minute]+":"+time[second]+"\e[0m\n";
+         cout<<"\e[2;"+to_string(7+j)+"H"+color+"Time "+time[day]+":"+time[hour]+":"+time[minute]+":"+time[second]+"\e[0m\n";
          time_thread.join();
          ++second;
    }
@@ -288,14 +299,19 @@ piece::piece()
    prelevel=(prelevel < 1)?6:prelevel;            
    speedlevel=(speedlevel > 8)?0:speedlevel;
    runlevel=(runlevel < 0 || runlevel > 31)?32:runlevel+1;            
+   width=width<17?25:width;
+   height=height<10?30:height;
+   lower=height+toph;
+   wthm=2*width+modw;
+   dist=modw+wthm+3;
    vector<int> v;
    vector<string> u;
-   box_map.assign(30, v);
-   box_color.assign(30, u);
-   for (int i=0; i!=30; ++i)
+   box_map.assign(height, v);
+   box_color.assign(height, u);
+   for (int i=0; i!=height; ++i)
    {
-        box_map[i].assign(25, 0);
-        box_color[i].assign(25, "");
+        box_map[i].assign(width, 0);
+        box_color[i].assign(width, "");
    }
    old_preview_block.assign(prelevel,"");
    next_preview_color.assign(prelevel,"");
@@ -313,16 +329,16 @@ piece::piece()
 
 void piece::check(int i, int j)
 { 
-   if ( ! box_map[i-4][j/2-3] ) full=false; 
+   if ( ! box_map[i-modw][j/2-toph] ) full=false; 
 }
 
 void piece::update(int i, int j)
 { 
    string pos="\e["+to_string(i)+";"+to_string(j)+"H";
-   if ( ! box_map[i-4][j/2-3] ) 
+   if ( ! box_map[i-modw][j/2-toph] ) 
         cout<<pos+"  ";
    else
-        cout<<pos+"\e["+box_color[i-4][j/2-toph]+unit+"\e[0m";
+        cout<<pos+"\e["+box_color[i-modw][j/2-toph]+unit+"\e[0m";
 }
 
 int piece::drop_bottom()
@@ -348,7 +364,7 @@ int piece::drop_bottom()
    
    for (int i=0, j=0; i!=height; j+=2)
    { 
-        if (box_map[max[j]+i-4][max[j+1]/2-toph] == 1) return i-1;
+        if (box_map[max[j]+i-modw][max[j+1]/2-toph] == 1) return i-1;
         if (max[j]+i == lower) return i;
         if (j+2 == max.size())
         { 
@@ -368,8 +384,8 @@ vector<int>& piece::get_piece()
 
 void piece::init(int i, int j)
 { 
-   box_map[i-4][j/2-3]=0;
-   box_color[i-4][j/2-3]=""; 
+   box_map[i-modw][j/2-toph]=0;
+   box_color[i-modw][j/2-toph]=""; 
 }
 
 void piece::init_color()
@@ -395,7 +411,7 @@ void piece::init_color()
 
 void piece::loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int))
 {
-   for(int i=4,j=6,l=54; i<=lower; j+=2)
+   for(int i=4,j=6,l=wthm; i<=lower; j+=2)
    {
        full=true; 
        (this->*lhs)(i, j);
@@ -424,11 +440,11 @@ void piece::shift_piece(int i)
    ++line;
    for(int j=i; j>toph+1; --j)
    {
-       box_color[j-4]=box_color[j-5];
-       box_map[j-4]=box_map[j-5]; 
+       box_color[j-modw]=box_color[j-5];
+       box_map[j-modw]=box_map[j-5]; 
    }
-   box_map[0].assign(25, 0);
-   box_color[0].assign(25, "");
+   box_map[0].assign(width, 0);
+   box_color[0].assign(width, "");
 }
 
 void piece::get_preview(vector<int>& box0, string& old_block, int n, string& new_block_color)
@@ -518,16 +534,17 @@ void piece::draw_piece(int n, double dx, int dy)
 void piece::random_piece()
 {
    ++count;
+   int k=height-1;
    for (int i=0,j=6; i!=count; j+=2)
    {
-        if ( j == 54 ) { j=4; ++i; }
+        if ( j == wthm ) { j=4; ++i; }
         if ( rnd()%2 ) 
         { 
-            box_map[33-i][j/2-3]=1; 
-            box_color[33-i][j/2-3]=color[rnd()%color.size()];
+            box_map[k-i][j/2-toph]=1; 
+            box_color[k-i][j/2-toph]=color[rnd()%color.size()];
         }
    }
-   if ( count == 29 ) count=0;
+   if ( count == k ) count=0;
 }
 
 void piece::coord_comp(int&x, int& y, int& u, int& v)
@@ -570,7 +587,7 @@ void piece::runbomb(int x, int y, int size)
         bool boolq=(q <= wthm && q > modw);
         if ( boolp && boolq )
         {
-             if ( ! box_map[p-4][q/2-3] && p+q != x+y && size != 8 ) continue;
+             if ( ! box_map[p-modw][q/2-toph] && p+q != x+y && size != 8 ) continue;
               empty+="\e["+to_string(p)+";"+to_string(q)+"H"+"\040\040";
               init(p, q); 
         }
@@ -594,8 +611,8 @@ void piece::clear_row()
         }
         else
         {
-            box_map[x-4][y/2-3]=1;
-            box_color[x-4][y/2-3]=cur_color;
+            box_map[x-modw][y/2-toph]=1;
+            box_color[x-modw][y/2-toph]=cur_color;
         }
    }
    line=0;
@@ -720,15 +737,15 @@ int piece::move_piece(double dx, int dy)
         int x=locus[i]+dx;
         int y=locus[i+1]+dy;
         bool boolx=(x <= toph || x > lower);
-        bool booly=(y > wthm || y <= modw);
+        bool booly=(y >= wthm+2 || y <= modw+1);
         if ( boolx || booly ) return 0;
-        if ( box_map[x-4][y/2-3] )
+        if ( box_map[x-modw][y/2-toph] )
         {
              if ( len == 2 )
              {
                     for (int j=lower; j>x; --j)
                     {
-                         if ( ! box_map[j-4][y/2-toph] ) return 1;
+                         if ( ! box_map[j-modw][y/2-toph] ) return 1;
                     }
              }
              return 0;
@@ -741,7 +758,7 @@ void piece::ghost_cross()
 {
    int i=locus[0];
    int j=locus[1];
-   if ( box_map[i-4][j/2-toph] ) cout<<"\e["+to_string(i)+";"+to_string(j)+"H\e["+box_color[i-4][j/2-toph]+unit+"\e[0m\n";
+   if ( box_map[i-modw][j/2-toph] ) cout<<"\e["+to_string(i)+";"+to_string(j)+"H\e["+box_color[i-modw][j/2-toph]+unit+"\e[0m\n";
 }
 
 void piece::optimize(vector<int>& new_box, initializer_list<int> ink)
@@ -890,8 +907,8 @@ void piece::board()
    }
    for (int i=toph; i<=lower+1; ++i)
    {
-        string str1=boucol+";"+to_string(num+i)+";1m\e["+to_string(i)+";"+to_string(modw-1)+"H||";
-        string str2=boucol+";"+to_string(num+i+30)+";1m\e["+to_string(i)+";"+to_string(wthm+1)+"H||\e[0m";
+        string str1=boucol+";"+to_string(num+i)+";1m\e["+to_string(i)+";"+to_string(modw)+"H||";
+        string str2=boucol+";"+to_string(num+i+30)+";1m\e["+to_string(i)+";"+to_string(wthm+2)+"H||\e[0m";
         cout<<str1+str2<<endl;
    }
 }
@@ -916,9 +933,9 @@ void piece::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.6\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.7\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/12/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/13/2013]";
    cout<<str8+str9<<endl;
 }
 
