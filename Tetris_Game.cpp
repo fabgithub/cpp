@@ -1,6 +1,6 @@
-//Tetris Game // This one is under development (ported from the shell one) 
+//Tetris Game // This one is under development (ported from the shell) 
               // Just enjoy the one developed in shell to get the full features 
-              // As it's pretty good
+              // As which is pretty good!
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                          //
