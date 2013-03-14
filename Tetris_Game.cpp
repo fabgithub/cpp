@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0.7 02/20/2013 BeiJing China [Updated 03/13/2013]                         //
+//   Version: 1.0.0.8 02/20/2013 BeiJing China [Updated 03/14/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -146,43 +146,42 @@ class get_time
 int get_args(vector<string>& args)
 {
    int args_len=args.size();
-   switch (args_len)
+   if (args_len > 2)
    { 
-      case 6: width=stoi(args[4]);
-              height=stoi(args[5]);
-              runlevel=stoi(args[1]);
-              prelevel=stoi(args[2]); 
-              speedlevel=stoi(args[3]); return 0;
-      case 5: width=stoi(args[4]);
-              runlevel=stoi(args[1]);
-              prelevel=stoi(args[2]); 
-              speedlevel=stoi(args[3]); return 0;
-      case 4: runlevel=stoi(args[1]);
-              prelevel=stoi(args[2]); 
-              speedlevel=stoi(args[3]); return 0;
-      case 3: runlevel=stoi(args[1]);
-              prelevel=stoi(args[2]);   return 0;
-      case 2: {
-                string str=args[1]; 
-                if ( str == "-h" || str == "--help") 
-                {
-                     cout<<"Usage: "<<args[0]<<" [runlevel] [previewlevel] [speedlevel] [width] [height]"<<endl;
-                     cout<<"Range: [ 0 =< runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 30 ]   [ width >= 17 ]   [ height>= 10 ]"<<endl;
-                     return 1;
-                }
-                else if ( str == "-v" || str == "--version" )
-                {
-                     cout<<"Tetris Game  Version 1.0.0.7 [Updated 03/13/2013]"<<endl;
-                     return 1;
-                }
-                else
-                {
-                     runlevel=stoi(args[1]);   
-                     return 0;
-                }
-              }
-     case  1:   return 0;
+       runlevel=stoi(args[1]);
+       prelevel=stoi(args[2]);
+       if (args_len > 3)
+       {
+          speedlevel=stoi(args[3]);
+          if (args_len > 4)
+          {
+             width=stoi(args[4]);
+             if (args_len > 5) height=stoi(args[5]);
+          }
+       }
+       return 0;
    }
+   else if (args_len == 2)
+   {
+       string str=args[1]; 
+       if ( str == "-h" || str == "--help") 
+       {
+           cout<<"Usage: "<<args[0]<<" [runlevel] [previewlevel] [speedlevel] [width] [height]"<<endl;
+           cout<<"Range: [ 0 =< runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 30 ]   [ width >= 17 ]   [ height>= 10 ]"<<endl;
+           return 1;
+       }
+       else if ( str == "-v" || str == "--version" )
+       {
+           cout<<"Tetris Game  Version 1.0.0.8 [Updated 03/14/2013]"<<endl;
+           return 1;
+       }
+       else
+       {
+           runlevel=stoi(args[1]);   
+           return 0;
+       }
+   }
+   return 0;
 }
 
 class piece
@@ -933,9 +932,9 @@ void piece::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.7\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.8\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/13/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/14/2013]";
    cout<<str8+str9<<endl;
 }
 
