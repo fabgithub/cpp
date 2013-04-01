@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0.8 02/20/2013 BeiJing China [Updated 03/14/2013]                         //
+//   Version: 1.0.0.9 02/20/2013 BeiJing China [Updated 04/01/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -86,23 +86,24 @@ int wthm=2*width+modw;
 int dist=modw+wthm+3;
 const string unit="[]";
 int lower=height+toph;
+vector<int> box, locus;
 const string gmover="\e[?25h\e[36;26HGame Over!\e[0m\n";
 
 static struct termios oldt;
 
 void restore_terminal_settings()
 {
-    tcsetattr(0, TCSANOW, &oldt);
+   tcsetattr(0, TCSANOW, &oldt);
 }
 
 void disable_waiting_for_enter()
 {
-    struct termios newt;
-    tcgetattr(0, &oldt); 
-    newt=oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(0, TCSANOW, &newt);
-    atexit(restore_terminal_settings);
+   struct termios newt;
+   tcgetattr(0, &oldt); 
+   newt=oldt;
+   newt.c_lflag &= ~(ICANON | ECHO);
+   tcsetattr(0, TCSANOW, &newt);
+   atexit(restore_terminal_settings);
 }
 
 void wait(int n)
@@ -125,22 +126,6 @@ struct data
 {
    int value;
    data(): value(0){} 
-};
-
-class get_time
-{
-   public:
-      void current();
-      void resize(initializer_list<int> dhms);
-      void set_time(int&, int&, int value=60); 
-   protected:
-      int day=0;
-      int hour=0;
-      int minute=0;
-      int second=0;
-      map<int, string> time;
-      string color="\e[1;33m";
-      string line="";
 };
 
 int get_args(vector<string>& args)
@@ -172,7 +157,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-           cout<<"Tetris Game  Version 1.0.0.8 [Updated 03/14/2013]"<<endl;
+           cout<<"Tetris Game  Version 1.0.0.9 [Updated 04/01/2013]"<<endl;
            return 1;
        }
        else
@@ -183,6 +168,40 @@ int get_args(vector<string>& args)
    }
    return 0;
 }
+
+class piece;
+
+class transpose
+{
+   public:
+      transpose(){}
+      friend class piece;
+      vector<int> unique(vector<int>&);
+      void addbox(vector<int>&, int, int);
+      tuple<int, int> mid_point(vector<int>&);
+      vector<int> multiple(vector<int>&, int, int);
+      void coordinate_transformation(double, int, int);
+      void abstract(vector<int>&, int&, int&, int, int);
+      void optimize(vector<int>&, initializer_list<int>);
+   protected:
+      vector<int> new_box, new_coordinate;
+};
+
+class get_time
+{
+   public:
+      void current();
+      void resize(initializer_list<int> dhms);
+      void set_time(int&, int&, int value=60); 
+   protected:
+      int day=0;
+      int hour=0;
+      int minute=0;
+      int second=0;
+      map<int, string> time;
+      string color="\e[1;33m";
+      string line="";
+};
 
 class piece
 {
@@ -199,12 +218,12 @@ class piece
       int drop_bottom();
       void init_color();
       void ghost_cross();
-      void shift_piece(int);
       void init(int, int);
       void random_piece();
       void check(int, int);
       void get_invoke(int);
       void show_piece(int);
+      void shift_piece(int);
       void update(int, int);
       void perplus(int, int);
       vector<int>& get_piece();
@@ -213,29 +232,22 @@ class piece
       int move_piece(double, int);
       void coordinate(vector<int>&);
       void transform(double, int dy=1);
-      vector<int> unique(vector<int>&);
       string& get_replace(string& str);
       void draw_piece(int, double, int);
-      void addbox(vector<int>&, int, int);
       void top_point(vector<int>& cur_box);
       void runbomb(int x, int y, int size);
       void coord_comp(int&, int&, int&, int&);
-      tuple<int, int> mid_point(vector<int>&);
-      vector<int> multiple(vector<int>&, int, int);
       void get_point(vector<int>&, int&, int&, int);
-      void midplus(vector<int>&, int, int, int, int);
-      void optimize(vector<int>&, initializer_list<int>);
       void get_preview(vector<int>&, string&, int, string&);
-      void abstract(vector<int>&, vector<int>&, int&, int&, int, int);
       void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
-      void coordinate_transformation(vector<int>&, vector<int>&, double, int, int);
       void pipe_piece(vector<int>&, vector<int>&, string&, int, int, string&, string&);
    protected:
       int line=0;
       int count=0;
       bool full=true;
+      transpose trans;
+      vector<int> preview_box;
       vector<vector<string>> box_color;
-      vector<int> box, preview_box, locus;
       vector<vector<int>> box_map, next_preview_piece;
       vector<string> old_preview_block, next_preview_color, color;
       string cur_shadow, cur_color, old_shadow, cur_preview_block;
@@ -250,6 +262,84 @@ int main(int argc, char* argv[])
    thread t0{&get_time::current, &time};
    thread t1{&piece::persig, &pg};
    pg.getsig();
+}
+
+vector<int> transpose::unique(vector<int>& new_coordinate)
+{
+   map<string, int> mid;
+   vector<int> first_coordinate;
+   for (int i=0; i!=new_coordinate.size(); i+=2)
+   {
+        string key=to_string(new_coordinate[i])+"::"+to_string(new_coordinate[i+1]);
+        if ( !mid[key]++ ) 
+        {
+             first_coordinate.push_back(new_coordinate[i]);
+             first_coordinate.push_back(new_coordinate[i+1]);
+        }
+   }
+   return first_coordinate;
+}
+
+void transpose::addbox(vector<int>& new_box, int k, int j)
+{
+   for(int i=0; i!=new_box.size(); i+=2)
+   {
+       new_box[i+k]+=j;
+   }
+}
+
+tuple<int, int> transpose::mid_point(vector<int>& mid)
+{
+   if ( mid.size()%4 ) 
+   {
+        return make_tuple(mid[mid.size()/2-1], mid[mid.size()/2]);
+   }
+   else
+   {
+        return make_tuple(mid[mid.size()/2], mid[mid.size()/2+1]);
+   }
+}
+
+vector<int> transpose::multiple(vector<int>& dim, int b, int d)
+{
+   vector<int> mid(dim);
+   for (int i=0; i!=mid.size()-2; i+=2)
+   {
+        mid[i+3]=mid[i+1]+(dim[i+3]-dim[i+1])*b/d;
+   }
+   return mid;
+}
+
+void transpose::coordinate_transformation(double dx, int m, int n)
+{
+   int len=new_box.size();
+   new_coordinate.assign(len,0);           
+   for (int i=0; i!=len; i+=2)                             // row=(x-m)*zoomx*cos(a)-(y-n)*zoomy*sin(a)+m
+   {                                                       // col=(x-m)*zoomx*sin(a)+(y-n)*zoomy*cos(a)+n
+        new_coordinate[i]=m+new_box[i+1]-n;                // a=-pi/2 zoomx=+1 zoomy=+1 dx=0 dy=0
+        new_coordinate[i+1]=(new_box[i]-m)*dx+n;           // a=-pi/2 zoomx=-1 zoomy=+1 dx=0 dy=0 
+   }                                                       // a=+pi/2 zoomx=+1 zoomy=-1 dx=0 dy=0
+   if ( dx == 0.5 ) new_coordinate=unique(new_coordinate);
+}
+
+void transpose::abstract(vector<int>& pix, int& i, int& j, int b, int d)
+{
+   new_box=multiple(pix, b, d);
+   tie(i, j)=mid_point(new_box);
+}
+
+void transpose::optimize(vector<int>& new_box, initializer_list<int> ink)
+{
+   int n=0;
+   for (auto& j : ink)
+   {
+       ++n;
+       if ( j )
+       {
+            int k=n>1?1:0;
+            addbox(new_box, k, j);
+       } 
+   }
 }
 
 void get_time::set_time(int& lhs, int& rhs, int value)
@@ -279,17 +369,17 @@ void get_time::current()
    cout<<"\e[2;6H"+color+line+"[\e[2;"+to_string(23+j)+"H"+color+"]"+line+"\e[0m\n";
    while (true)
    {
-         if ( sig == 22 ) { runleave(0); break; }
-         thread time_thread(wait, 1000);
-         time.clear();
-         set_time(second, minute);
-         set_time(minute, hour);
-         set_time(hour, day, 24);
-         time[day]=day;
-         resize({day, hour, minute, second});
-         cout<<"\e[2;"+to_string(7+j)+"H"+color+"Time "+time[day]+":"+time[hour]+":"+time[minute]+":"+time[second]+"\e[0m\n";
-         time_thread.join();
-         ++second;
+       if ( sig == 22 ) { runleave(0); break; }
+       thread time_thread(wait, 1000);
+       time.clear();
+       set_time(second, minute);
+       set_time(minute, hour);
+       set_time(hour, day, 24);
+       time[day]=day;
+       resize({day, hour, minute, second});
+       cout<<"\e[2;"+to_string(7+j)+"H"+color+"Time "+time[day]+":"+time[hour]+":"+time[minute]+":"+time[second]+"\e[0m\n";
+       time_thread.join();
+       ++second;
    }
 } 
 
@@ -309,8 +399,8 @@ piece::piece()
    box_color.assign(height, u);
    for (int i=0; i!=height; ++i)
    {
-        box_map[i].assign(width, 0);
-        box_color[i].assign(width, "");
+       box_map[i].assign(width, 0);
+       box_color[i].assign(width, "");
    }
    old_preview_block.assign(prelevel,"");
    next_preview_color.assign(prelevel,"");
@@ -499,7 +589,7 @@ void piece::show_piece(int n)
    cur_preview_block="";
    next_preview_piece[end]=get_piece();
    next_preview_color[end]=color[rnd()%color.size()];
-   get_preview(box, old_preview_block[end], 12*(3-prelevel), next_preview_color[end]);
+   get_preview(box, old_preview_block[end], 12*(2-end), next_preview_color[end]);
    old_preview_block[end]=cur_preview_block;
    box=preview_box;
 }
@@ -662,53 +752,53 @@ int piece::getsig()
    char arry[3]="";
    while (true)
    {
-         key=getchar();
-         sig=0;
-         arry[0]=arry[1]; 
-         arry[1]=arry[2];
-         arry[2]=key;
-         if   ( key == ' ' || key == '\n' ) sig=31;
-         else if ( key == pool && arry[1] == pool ) { runleave(1); return 0; }
-         else if ( arry[0] == pool && arry[1] == '[' )
-         {
-                 switch (key)
-                 {
-                    case 'A':  sig=23; break;
-                    case 'B':  sig=29; break;
-                    case 'D':  sig=27; break;
-                    case 'C':  sig=28; break;
-                 }
+       key=getchar();
+       sig=0;
+       arry[0]=arry[1]; 
+       arry[1]=arry[2];
+       arry[2]=key;
+       if   ( key == ' ' || key == '\n' ) sig=31;
+       else if ( key == pool && arry[1] == pool ) { runleave(1); return 0; }
+       else if ( arry[0] == pool && arry[1] == '[' )
+       {
+            switch (key)
+            {
+               case 'A':  sig=23; break;
+               case 'B':  sig=29; break;
+               case 'D':  sig=27; break;
+               case 'C':  sig=28; break;
+            }
                  
-         }
-         else
-         {
-                 switch (key)
-                 {
-                    case 'W': 
-                    case 'w': sig=23; break;
-                    case 'T':
-                    case 't': sig=24; break;
-                    case 'M':
-                    case 'm': sig=25; break;
-                    case 'N':
-                    case 'n': sig=26; break;
-                    case 'S':
-                    case 's': sig=29; break;
-                    case 'A':
-                    case 'a': sig=27; break;
-                    case 'D':
-                    case 'd': sig=28; break;
-                    case 'U':
-                    case 'u': sig=30; break;
-                    case 'P':
-                    case 'p': sig=19; break;
-                    case 'R':
-                    case 'r': sig=18; break;
-                    case 'Q':
-                    case 'q': runleave(1); return 0;
-                 }
-         }
-         if ( sig == 22 ) { runleave(1); return 0;}
+       }
+       else
+       {
+            switch (key)
+            {
+               case 'W': 
+               case 'w': sig=23; break;
+               case 'T':
+               case 't': sig=24; break;
+               case 'M':
+               case 'm': sig=25; break;
+               case 'N':
+               case 'n': sig=26; break;
+               case 'S':
+               case 's': sig=29; break;
+               case 'A':
+               case 'a': sig=27; break;
+               case 'D':
+               case 'd': sig=28; break;
+               case 'U':
+               case 'u': sig=30; break;
+               case 'P':
+               case 'p': sig=19; break;
+               case 'R':
+               case 'r': sig=18; break;
+               case 'Q':
+               case 'q': runleave(1); return 0;
+            }
+       }
+       if ( sig == 22 ) { runleave(1); return 0;}
    }
    return 0;
 }
@@ -718,14 +808,6 @@ void piece::drawbox()
 { 
    old_shadow=cur_shadow; 
    cout<<"\e["+cur_color+cur_shadow+"\e[0m\n"; 
-}
-
-tuple<int, int> piece::mid_point(vector<int>& mid)
-{
-   if ( mid.size()%4 ) 
-        return make_tuple(mid[mid.size()/2-1], mid[mid.size()/2]);
-   else
-        return make_tuple(mid[mid.size()/2], mid[mid.size()/2+1]);
 }
 
 int piece::move_piece(double dx, int dy)
@@ -760,33 +842,11 @@ void piece::ghost_cross()
    if ( box_map[i-modw][j/2-toph] ) cout<<"\e["+to_string(i)+";"+to_string(j)+"H\e["+box_color[i-modw][j/2-toph]+unit+"\e[0m\n";
 }
 
-void piece::optimize(vector<int>& new_box, initializer_list<int> ink)
-{
-   int n=0;
-   for (auto& j : ink)
-   {
-       ++n;
-       if ( j )
-       {
-            int k=n>1?1:0;
-            addbox(new_box, k, j);
-       } 
-   }
-}
-
-void piece::addbox(vector<int>& new_box, int k, int j)
-{
-   for(int i=0; i!=new_box.size(); i+=2)
-   {
-       new_box[i+k]+=j;
-   }
-}
-
 void piece::perplus(int dx, int dy)
 {
    if ( locus.size() == 2 )  ghost_cross();
    vector<int> new_box(box);
-   optimize(new_box, {dx, dy});
+   trans.optimize(new_box, {dx, dy});
    coordinate(new_box);
    box=new_box;
 }
@@ -810,73 +870,20 @@ void piece::move(double& dx, int& dy)
    } 
 }
 
-vector<int> piece::multiple(vector<int>& dim, int b, int d)
-{
-   vector<int> mid(dim);
-   for (int i=0; i!=mid.size()-2; i+=2)
-   {
-        mid[i+3]=mid[i+1]+(dim[i+3]-dim[i+1])*b/d;
-   }
-   return mid;
-}
-
-vector<int> piece::unique(vector<int>& new_coordinate)
-{
-    map<string, int> mid;
-    vector<int> first_coordinate;
-    for (int i=0; i!=new_coordinate.size(); i+=2)
-    {
-         string key=to_string(new_coordinate[i])+"::"+to_string(new_coordinate[i+1]);
-         if ( !mid[key]++ ) 
-         {
-              first_coordinate.push_back(new_coordinate[i]);
-              first_coordinate.push_back(new_coordinate[i+1]);
-         }
-    }
-    return first_coordinate;
-}
-
-void piece::coordinate_transformation(vector<int>& new_coordinate, vector<int>& new_box, double dx, int m, int n)
-{
-   int len=new_box.size();
-   new_coordinate.assign(len,0);           
-   for (int i=0; i!=len; i+=2)                    // row=(x-m)*zoomx*cos(a)-(y-n)*zoomy*sin(a)+m
-   {                                              // col=(x-m)*zoomx*sin(a)+(y-n)*zoomy*cos(a)+n
-        new_coordinate[i]=m+new_box[i+1]-n;       // a=-pi/2 zoomx=+1 zoomy=+1 dx=0 dy=0
-        new_coordinate[i+1]=(new_box[i]-m)*dx+n;  // a=-pi/2 zoomx=-1 zoomy=+1 dx=0 dy=0 
-   }                                              // a=+pi/2 zoomx=+1 zoomy=-1 dx=0 dy=0
-   if ( dx == 0.5 ) 
-        new_coordinate=unique(new_coordinate);
-}
-
-void piece::midplus(vector<int>& new_box, int mp, int p, int nq, int q)
-{
-   int dx=mp-p;
-   int dy=nq-q;
-   optimize(new_box, {dx, dy});
-}
-
-void piece::abstract(vector<int>& pix, vector<int>& new_box, int& i, int& j, int b, int d)
-{
-   new_box=multiple(pix, b, d);
-   tie(i, j)=mid_point(new_box);
-}
-
 void piece::rotate(double& dx, int& dy)
 {     
    int m,n,p,q,mp,nq;
-   vector<int> new_coordinate, new_box;
-   tie(mp,nq)=mid_point(box); 
-   abstract(box, new_box, m, n, 1, 2);
-   coordinate_transformation(new_coordinate, new_box, dx, m, n); 
+   tie(mp,nq)=trans.mid_point(box); 
+   trans.abstract(box, m, n, 1, 2);
+   trans.coordinate_transformation(dx, m, n); 
    dx=dy=0;
-   abstract(new_coordinate, new_box, p, q, 2, 1);
-   midplus(new_box, mp, p, nq, q); 
-   locus=new_box;
+   trans.abstract(trans.new_coordinate, p, q, 2, 1);
+   trans.optimize(trans.new_box, {mp-p, nq-q});
+   locus=trans.new_box;
    if (move_piece(dx, dy))
    {
        get_erase(); 
-       coordinate(new_box);
+       coordinate(trans.new_box);
        drawbox(); 
        box=locus;
    }
@@ -932,9 +939,9 @@ void piece::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.8\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.9\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 03/14/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 04/01/2013]";
    cout<<str8+str9<<endl;
 }
 
