@@ -171,6 +171,15 @@ int get_args(vector<string>& args)
 
 class piece;
 
+class board
+{
+   public:
+      board(){}
+      void border();
+      void notify();
+      void matrix();
+};
+
 class transpose
 {
    public:
@@ -207,11 +216,8 @@ class piece
 {
    public:
       piece();
-      void board();
       int persig();
       int getsig();
-      void notify();
-      void matrix();
       void drawbox();
       void get_erase();
       void clear_row();
@@ -242,6 +248,7 @@ class piece
       void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
       void pipe_piece(vector<int>&, vector<int>&, string&, int, int, string&, string&);
    protected:
+      board bd;
       int line=0;
       int count=0;
       bool full=true;
@@ -409,9 +416,9 @@ piece::piece()
    printf("%c%c%c%c%c%c",27,'[','H',27,'[','J' );
    loop(&piece::init);
    init_color();
-   board();
-   matrix();
-   notify();
+   bd.border();
+   bd.matrix();
+   bd.notify();
    show_piece(1);
    draw_piece(1,0,0);
 }
@@ -901,7 +908,7 @@ void piece::transform(double dx, int dy)
         rotate(dx, dy); 
 }
 
-void piece::board()
+void board::border()
 {
    string boucol="\e[38;5";
    int num=rnd()%145+6;
@@ -919,7 +926,7 @@ void piece::board()
    }
 }
 
-void piece::notify()
+void board::notify()
 {
    string str0="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+49)+"H"+to_string(scorelevel);
    string str1="\e[1;34m\e["+to_string(toph+10)+";"+to_string(dist+30)+"H"+to_string(speedlevel)+"\e[0m";
@@ -945,7 +952,7 @@ void piece::notify()
    cout<<str8+str9<<endl;
 }
 
-void piece::matrix()
+void board::matrix()
 {
    string one=" ";
    string sr="\e[0m";
