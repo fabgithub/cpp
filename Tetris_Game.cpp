@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.0.9 02/20/2013 BeiJing China [Updated 04/01/2013]                         //
+//   Version: 1.0.1.0 02/20/2013 BeiJing China [Updated 04/09/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -157,7 +157,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-           cout<<"Tetris Game  Version 1.0.0.9 [Updated 04/01/2013]"<<endl;
+           cout<<"Tetris Game  Version 1.0.1.0 [Updated 04/09/2013]"<<endl;
            return 1;
        }
        else
@@ -946,50 +946,52 @@ void board::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.0.9\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.0\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 04/01/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 04/09/2013]";
    cout<<str8+str9<<endl;
 }
 
 void board::matrix()
 {
    string one=" ";
-   string sr="\e[0m";
-   string trx="[][]";
+   string end="\e[0m";
+   string block="[][]";
    string two=one+one;
-   string tre=one+two;
-   string cps=two+tre;
-   string spc=cps+cps;         
+   string cube=one+two;
+   string five=two+cube;
+   string ten=five+five;         
    string equ="\e[38;5;191;1m";
    string colbon="\e[38;5;47;1m";
    string mcol="\e[38;5;30;1m";
-   string fk5=spc+spc;
-   string fk4=mcol+"[]"+sr;
-   string fk0=colbon+"[]"+sr;
-   string fk1=colbon+trx+sr;
-   string fk6=mcol+"[]"+trx+sr;
-   string fk2=colbon+"[]"+trx+sr;
-   string fk3=colbon+trx+trx+sr;
-   string fk=tre+fk0+two+fk3+two+fk3;
-   string fk7=fk1+one+fk1+fk+fk4+two+two;
-   string fk8=fk0+one+equ+"row"+one+fk0+tre+fk0+two+fk0+one+equ+"(x-m)*zoomx"+two;
-   string fk9=one+equ+"="+one+fk0+two+fk0+spc+tre+one+fk0+tre+equ+"*"+two;
-   string fk10=spc+cps+two+fk0+two+fk0+one+equ+"+"+one+fk0+cps+fk0;
-   string fk11=tre+one+fk0+two+equ+"cos(a)"+one+equ+"sin(a)"+two+fk0+two+fk0+tre+fk0+two+equ+"m"+two+fk0;
-   string fk12=one+equ+"col"+one+fk0+tre+fk0+two+fk0+one+equ+"(y-n)*zoomy"+two+fk0+cps+one;
-   string fk13=one+equ+"-sin(a)"+one+equ+"cos(a)"+two+fk0+two+fk0+tre+fk0+two+equ+"n"+two+fk0;
-   string fk14=fk1+one+fk1+fk+cps+one;
-   string fk15=fk1+two+fk0+tre+fk1+one+fk1;
-   cout<<"\e["+to_string(toph+23)+";"+to_string(dist)+"H"+colbon+"Algorithm:"+two+fk2+one+fk5+fk5+fk2+fk4<<endl;
-   cout<<"\e["+to_string(toph+30)+";"+to_string(dist)+"H"+spc+two+fk0+two+two+cps+fk5+fk5+fk0<<endl;
-   cout<<"\e["+to_string(toph+25)+";"+to_string(dist)+"H"+fk7+fk1+spc+tre+fk1+two+fk0+tre+fk1+one+fk1<<endl;
-   cout<<"\e["+to_string(toph+26)+";"+to_string(dist)+"H"+fk8+fk0+fk4+fk11+"\e["+to_string(toph+28)+";"+to_string(dist)+"H"+fk0+fk12+fk0+fk13<<endl;
-   cout<<"\e["+to_string(toph+24)+";"+to_string(dist)+"H"+two+spc+fk0+spc+tre+two+tre+fk6+fk5+cps+fk0+fk4<<endl;
-   string str0="\e["+to_string(toph+22)+";"+to_string(dist)+"H"+tre+fk5+fk5+fk5+fk6+"\e[";
-   string str1=to_string(toph+29)+";"+to_string(dist)+"H"+fk14+fk1+spc+tre+fk15;
-   cout<<str0+str1<<endl;
-   string str2="\e["+to_string(toph+27)+";"+to_string(dist)+"H"+fk0+cps+fk0+fk9+fk0+fk10;
-   string str3="\e["+to_string(toph+31)+";"+to_string(dist)+"H"+spc+two+fk2+fk5+fk5+" "+fk2;
-   cout<<str2+str3<<endl;
+   string str5=ten+ten;
+   string str4=mcol+"[]"+end;
+   string str0=colbon+"[]"+end;
+   string str1=colbon+block+end;
+   string str6=mcol+"[]"+block+end;
+   string str2=colbon+"[]"+block+end;
+   string str3=colbon+block+block+end;
+   string str=cube+str0+two+str3+two+str3;
+   string str7=str1+one+str1+str+str4+two+two;
+   string str8=str0+one+equ+"row"+one+str0+cube+str0+two+str0+one+equ+"(x-m)*zoomx"+two;
+   string str9=one+equ+"="+one+str0+two+str0+ten+cube+one+str0+cube+equ+"*"+two;
+   string str10=ten+five+two+str0+two+str0+one+equ+"+"+one+str0+five+str0;
+   string str11=cube+one+str0+two+equ+"cos(a)"+one+equ+"sin(a)"+two+str0+two+str0+cube+str0+two+equ+"m"+two+str0;
+   string str12=one+equ+"col"+one+str0+cube+str0+two+str0+one+equ+"(y-n)*zoomy"+two+str0+five+one;
+   string str13=one+equ+"-sin(a)"+one+equ+"cos(a)"+two+str0+two+str0+cube+str0+two+equ+"n"+two+str0;
+   string str14=str1+one+str1+str+five+one;
+   string str15=str1+two+str0+cube+str1+one+str1;
+   cout<<"\e["+to_string(toph+23)+";"+to_string(dist)+"H"+colbon+"Algorithm:"+two+str2+one+str5+str5+str2+str4<<endl;
+   cout<<"\e["+to_string(toph+30)+";"+to_string(dist)+"H"+ten+two+str0+two+two+five+str5+str5+str0<<endl;
+   cout<<"\e["+to_string(toph+25)+";"+to_string(dist)+"H"+str7+str1+ten+cube+str1+two+str0+cube+str1+one+str1<<endl;
+   string str16="\e["+to_string(toph+26)+";"+to_string(dist)+"H"+str8+str0+str4;
+   string str17=str11+"\e["+to_string(toph+28)+";"+to_string(dist)+"H"+str0+str12+str0+str13;
+   cout<<str16+str17<<endl;
+   cout<<"\e["+to_string(toph+24)+";"+to_string(dist)+"H"+two+ten+str0+ten+cube+two+cube+str6+str5+five+str0+str4<<endl;
+   string str18="\e["+to_string(toph+22)+";"+to_string(dist)+"H"+cube+str5+str5+str5+str6+"\e[";
+   string str19=to_string(toph+29)+";"+to_string(dist)+"H"+str14+str1+ten+cube+str15;
+   cout<<str18+str19<<endl;
+   string str20="\e["+to_string(toph+27)+";"+to_string(dist)+"H"+str0+five+str0+str9+str0+str10;
+   string str21="\e["+to_string(toph+31)+";"+to_string(dist)+"H"+ten+two+str2+str5+str5+" "+str2;
+   cout<<str20+str21<<endl;
 }
