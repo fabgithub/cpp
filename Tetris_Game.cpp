@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.1.0 02/20/2013 BeiJing China [Updated 04/09/2013]                         //
+//   Version: 1.0.1.1 02/20/2013 BeiJing China [Updated 04/10/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -122,12 +122,6 @@ void runleave(int n)
    }
 }
 
-struct data
-{
-   int value;
-   data(): value(0){} 
-};
-
 int get_args(vector<string>& args)
 {
    int args_len=args.size();
@@ -157,7 +151,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-           cout<<"Tetris Game  Version 1.0.1.0 [Updated 04/09/2013]"<<endl;
+           cout<<"Tetris Game  Version 1.0.1.1 [Updated 04/10/2013]"<<endl;
            return 1;
        }
        else
@@ -169,8 +163,6 @@ int get_args(vector<string>& args)
    return 0;
 }
 
-class piece;
-
 class board
 {
    public:
@@ -180,20 +172,40 @@ class board
       void matrix();
 };
 
+class piece;
+
+class max_distance
+{
+   protected:
+      struct data
+      {
+         int value;
+         data():value(0){} 
+      };
+   public:
+      void clear();
+      void max_vertical_coordinate();
+      int max_height(vector<vector<int>>&);
+   protected:
+      vector<int> max;
+      map<int, data> col;
+      map<int, pair<int, int>> row;
+};
+      
 class transpose
 {
    public:
-      transpose(){}
       friend class piece;
-      vector<int> unique(vector<int>&);
+      vector<int>& unique(vector<int>&);
       void addbox(vector<int>&, int, int);
       tuple<int, int> mid_point(vector<int>&);
-      vector<int> multiple(vector<int>&, int, int);
+      vector<int>& multiple(vector<int>&, int, int);
       void coordinate_transformation(double, int, int);
       void abstract(vector<int>&, int&, int&, int, int);
       void optimize(vector<int>&, initializer_list<int>);
    protected:
-      vector<int> new_box, new_coordinate;
+      map<string, int> mid;
+      vector<int> new_box, new_coordinate, first_coordinate;
 };
 
 class get_time
@@ -253,6 +265,7 @@ class piece
       int count=0;
       bool full=true;
       transpose trans;
+      max_distance dists;
       vector<int> preview_box;
       vector<vector<string>> box_color;
       vector<vector<int>> box_map, next_preview_piece;
@@ -271,10 +284,50 @@ int main(int argc, char* argv[])
    pg.getsig();
 }
 
-vector<int> transpose::unique(vector<int>& new_coordinate)
+void max_distance::clear()
 {
-   map<string, int> mid;
-   vector<int> first_coordinate;
+   max.clear();
+   col.clear();
+   row.clear();
+}
+
+void max_distance::max_vertical_coordinate()
+{
+   for (int i=0; i!=box.size(); i+=2)
+   {   
+        int q=box[i];
+        int p=box[i+1];
+        int& value=col[p].value;
+        if ( value == 0 ) value=box[i];
+        if ( value < q ) value=q;
+        row[p]=make_pair(value, p);
+   }
+   for (auto& key : row)
+   {
+        auto p=key.second;
+        max.push_back(p.first);
+        max.push_back(p.second);
+   }
+}
+
+int max_distance::max_height(vector<vector<int>>& box_map)
+{   
+   for (int i=0, j=0; i!=height; j+=2)
+   { 
+        if (box_map[max[j]+i-modw][max[j+1]/2-toph] == 1) return i-1;
+        if (max[j]+i == lower) return i;
+        if (j+2 == max.size())
+        { 
+            j=-2; 
+            ++i;
+        }
+   }
+}     
+
+vector<int>& transpose::unique(vector<int>& new_coordinate)
+{
+   mid.clear();
+   first_coordinate.clear();
    for (int i=0; i!=new_coordinate.size(); i+=2)
    {
         string key=to_string(new_coordinate[i])+"::"+to_string(new_coordinate[i+1]);
@@ -307,14 +360,14 @@ tuple<int, int> transpose::mid_point(vector<int>& mid)
    }
 }
 
-vector<int> transpose::multiple(vector<int>& dim, int b, int d)
+vector<int>& transpose::multiple(vector<int>& cur_box, int b, int d)
 {
-   vector<int> mid(dim);
-   for (int i=0; i!=mid.size()-2; i+=2)
+   new_box=cur_box;
+   for (int i=0; i!=cur_box.size()-2; i+=2)
    {
-        mid[i+3]=mid[i+1]+(dim[i+3]-dim[i+1])*b/d;
+        new_box[i+3]=new_box[i+1]+(cur_box[i+3]-cur_box[i+1])*b/d;
    }
-   return mid;
+   return new_box;
 }
 
 void transpose::coordinate_transformation(double dx, int m, int n)
@@ -329,10 +382,9 @@ void transpose::coordinate_transformation(double dx, int m, int n)
    if ( dx == 0.5 ) new_coordinate=unique(new_coordinate);
 }
 
-void transpose::abstract(vector<int>& pix, int& i, int& j, int b, int d)
+void transpose::abstract(vector<int>& mid, int& i, int& j, int b, int d)
 {
-   new_box=multiple(pix, b, d);
-   tie(i, j)=mid_point(new_box);
+   tie(i, j)=mid_point(multiple(mid, b, d));
 }
 
 void transpose::optimize(vector<int>& new_box, initializer_list<int> ink)
@@ -439,36 +491,10 @@ void piece::update(int i, int j)
 
 int piece::drop_bottom()
 {
-   map<int, data>            col;
-   map<int, pair<int, int>>  row;
-   for (int i=0; i!=box.size(); i+=2)
-   {   
-        int q=box[i];
-        int p=box[i+1];
-        int& value=col[p].value;
-        if ( value == 0 ) value=box[i];
-        if ( value < q ) value=q;
-        row[p]=make_pair(value, p);
-   }
-   vector<int> max;
-   for (auto& key : row)
-   {
-        auto p=key.second;
-        max.push_back(p.first);
-        max.push_back(p.second);
-   }
-   
-   for (int i=0, j=0; i!=height; j+=2)
-   { 
-        if (box_map[max[j]+i-modw][max[j+1]/2-toph] == 1) return i-1;
-        if (max[j]+i == lower) return i;
-        if (j+2 == max.size())
-        { 
-            j=-2; 
-            ++i;
-        }
-   }
-}     
+   dists.clear();
+   dists.max_vertical_coordinate();
+   return dists.max_height(box_map);
+}
 
 vector<int>& piece::get_piece()
 {
@@ -946,9 +972,9 @@ void board::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.0\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.1\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 04/09/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 04/10/2013]";
    cout<<str8+str9<<endl;
 }
 
