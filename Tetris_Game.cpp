@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.1.1 02/20/2013 BeiJing China [Updated 04/10/2013]                         //
+//   Version: 1.0.1.2 02/20/2013 BeiJing China [Updated 05/12/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -74,8 +74,8 @@ const int* BOX[32] {box0, box1, box2, box3, box4, box5, box6, box7, box8, box9, 
                     box19, box20, box21, box22, box23, box24, box25, box26, box27, box28, box29, box30, box31};
 const int toph=3;
 const int modw=4;
-random_device rnd;
 atomic<int> sig(0);
+random_device RANDOM;
 int width=25;
 int height=30;
 int prelevel=6;
@@ -146,12 +146,12 @@ int get_args(vector<string>& args)
        if ( str == "-h" || str == "--help") 
        {
            cout<<"Usage: "<<args[0]<<" [runlevel] [previewlevel] [speedlevel] [width] [height]"<<endl;
-           cout<<"Range: [ 0 =< runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 30 ]   [ width >= 17 ]   [ height>= 10 ]"<<endl;
+           cout<<"Range: [ 0 <= runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 30 ]   [ width >= 17 ]   [ height >= 10 ]"<<endl;
            return 1;
        }
        else if ( str == "-v" || str == "--version" )
        {
-           cout<<"Tetris Game  Version 1.0.1.1 [Updated 04/10/2013]"<<endl;
+           cout<<"Tetris Game  Version 1.0.1.2 [Updated 05/12/2013]"<<endl;
            return 1;
        }
        else
@@ -166,13 +166,10 @@ int get_args(vector<string>& args)
 class board
 {
    public:
-      board(){}
       void border();
       void notify();
       void matrix();
 };
-
-class piece;
 
 class max_distance
 {
@@ -192,6 +189,8 @@ class max_distance
       map<int, pair<int, int>> row;
 };
       
+class piece;
+
 class transpose
 {
    public:
@@ -252,8 +251,8 @@ class piece
       void transform(double, int dy=1);
       string& get_replace(string& str);
       void draw_piece(int, double, int);
+      void bomb(int x, int y, int size);
       void top_point(vector<int>& cur_box);
-      void runbomb(int x, int y, int size);
       void coord_comp(int&, int&, int&, int&);
       void get_point(vector<int>&, int&, int&, int);
       void get_preview(vector<int>&, string&, int, string&);
@@ -282,6 +281,7 @@ int main(int argc, char* argv[])
    thread t0{&get_time::current, &time};
    thread t1{&piece::persig, &pg};
    pg.getsig();
+   return 0;
 }
 
 void max_distance::clear()
@@ -499,7 +499,7 @@ int piece::drop_bottom()
 vector<int>& piece::get_piece()
 {
    box.clear();
-   int len=rnd()%runlevel;
+   int len=RANDOM()%runlevel;
    copy(BOX[len], BOX[len]+length[len], back_inserter(box));
    return box;
 }
@@ -592,7 +592,7 @@ string& old_preview_box, int n, int p, string& new_preview_color0, string& new_p
    if (p) 
    {
       next_preview_box0=get_piece();
-      cur_color=color[rnd()%color.size()];
+      cur_color=color[RANDOM()%color.size()];
       new_preview_color0=cur_color;
       get_preview(box, old_preview_box, n, cur_color);
    }
@@ -621,7 +621,7 @@ void piece::show_piece(int n)
    get_invoke(n);
    cur_preview_block="";
    next_preview_piece[end]=get_piece();
-   next_preview_color[end]=color[rnd()%color.size()];
+   next_preview_color[end]=color[RANDOM()%color.size()];
    get_preview(box, old_preview_block[end], 12*(2-end), next_preview_color[end]);
    old_preview_block[end]=cur_preview_block;
    box=preview_box;
@@ -641,7 +641,7 @@ void piece::draw_piece(int n, double dx, int dy)
 {
    if (n)
    {
-      cur_color=color[rnd()%color.size()];
+      cur_color=color[RANDOM()%color.size()];
       coordinate(get_piece());
    }
    else
@@ -660,10 +660,10 @@ void piece::random_piece()
    for (int i=0,j=6; i!=count; j+=2)
    {
         if ( j == wthm ) { j=4; ++i; }
-        if ( rnd()%2 ) 
+        if ( RANDOM()%2 ) 
         { 
             box_map[k-i][j/2-toph]=1; 
-            box_color[k-i][j/2-toph]=color[rnd()%color.size()];
+            box_color[k-i][j/2-toph]=color[RANDOM()%color.size()];
         }
    }
    if ( count == k ) count=0;
@@ -697,7 +697,7 @@ void piece::top_point(vector<int>& cur_box)
    }
 }
 
-void piece::runbomb(int x, int y, int size)
+void piece::bomb(int x, int y, int size)
 {
    string empty;
    vector<int> radius={x-1, y-2, x-1, y, x-1, y+2, x, y-2, x, y, x, y+2, x+1, y-2, x+1, y, x+1, y+2};
@@ -729,7 +729,7 @@ void piece::clear_row()
         int y=cur_box[i+1];
         if ( len == 16 )
         {
-             runbomb(x, y, cur_box.size());
+             bomb(x, y, cur_box.size());
         }
         else
         {
@@ -937,7 +937,7 @@ void piece::transform(double dx, int dy)
 void board::border()
 {
    string boucol="\e[38;5";
-   int num=rnd()%145+6;
+   int num=RANDOM()%145+6;
    for (int i=6; i<=wthm; i+=2)
    {
         string str1=boucol+";"+to_string(num+i)+";1m\e["+to_string(toph)+";"+to_string(i)+"H==";
@@ -972,9 +972,9 @@ void board::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.1\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.2\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 04/10/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 05/12/2013]";
    cout<<str8+str9<<endl;
 }
 
