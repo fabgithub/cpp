@@ -23,13 +23,13 @@ Run the game :
    height       :  Height of the game area              ( Default value is 30 )
 
    Usage        :  ./Tetris_Game [runlevel] [previewlevel] [speedlevel] [width] [height]
-   Range        :  [ 0 =< runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 8 ]   [ width >= 17 ]   [ height>= 10 ]
+   Range        :  [ 0 <= runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 8 ]   [ width >= 17 ]   [ height >= 10 ]
    Notice       :  runlevel previewlevel speedlevel width height belong to integer
 
 Tested Platform : 
    [root@node ~]# cat /etc/redhat-release 
    Fedora release 18 (Spherical Cow)
    [root@node ~]# uname -a
-   Linux node 3.7.5-201.fc18.x86_64 #1 SMP Mon Jan 28 19:54:41 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+   Linux node 3.8.11-200.fc18.x86_64 #1 SMP Wed May 1 19:44:27 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
    [root@node ~]# g++ --version | grep g++
    g++ (GCC) 4.7.2 20121109 (Red Hat 4.7.2-8)
