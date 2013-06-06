@@ -1,6 +1,6 @@
-//Tetris Game // This one is under development (ported from the shell) 
-              // Just enjoy the one developed in shell to get the full features 
-              // As which is pretty good!
+// Tetris Game // This one is under development (ported from the shell) 
+               // Just enjoy the one developed in shell to get the full features 
+               // As which is pretty good!
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                          //
@@ -8,7 +8,7 @@
 //   Project: https://github.com/yongye/cpp                                                 //
 //   Project: https://github.com/yongye/shell                                               //
 //   Author : YongYe <complex.invoke@gmail.com>                                             //
-//   Version: 1.0.1.2 02/20/2013 BeiJing China [Updated 05/12/2013]                         //
+//   Version: 1.0.1.3 02/20/2013 BeiJing China [Updated 06/06/2013]                         //
 //                                                                                          //
 //                                                                         [][][]           //
 //   Algorithm:  [][][]                                                [][][][]             //
@@ -151,7 +151,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-           cout<<"Tetris Game  Version 1.0.1.2 [Updated 05/12/2013]"<<endl;
+           cout<<"Tetris Game  Version 1.0.1.3 [Updated 06/06/2013]"<<endl;
            return 1;
        }
        else
@@ -244,13 +244,13 @@ class piece
       void update(int, int);
       void perplus(int, int);
       vector<int>& get_piece();
-      void move(double&, int&);
-      void rotate(double&, int&);
-      int move_piece(double, int);
+      void move(int, int);
+      void rotate(double, int);
+      int move_piece(int, int);
       void coordinate(vector<int>&);
       void transform(double, int dy=1);
       string& get_replace(string& str);
-      void draw_piece(int, double, int);
+      void draw_piece(int, int, int);
       void bomb(int x, int y, int size);
       void top_point(vector<int>& cur_box);
       void coord_comp(int&, int&, int&, int&);
@@ -425,7 +425,7 @@ void get_time::current()
 {
    int j=width-9;
    for(int k=0; k!=j; ++k) line+='-';
-   cout<<"\e[2;6H"+color+line+"[\e[2;"+to_string(23+j)+"H"+color+"]"+line+"\e[0m\n";
+   cout<<"\e[2;6H"+color+line+"[Time \e[2;"+to_string(23+j)+"H"+color+"]"+line+"\e[0m\n";
    while (true)
    {
        if ( sig == 22 ) { runleave(0); break; }
@@ -434,9 +434,9 @@ void get_time::current()
        set_time(second, minute);
        set_time(minute, hour);
        set_time(hour, day, 24);
-       time[day]=day;
+       time[day]=to_string(day);
        resize({day, hour, minute, second});
-       cout<<"\e[2;"+to_string(7+j)+"H"+color+"Time "+time[day]+":"+time[hour]+":"+time[minute]+":"+time[second]+"\e[0m\n";
+       cout<<"\e[2;"+to_string(12+j)+"H"+color+time[day]+":"+time[hour]+":"+time[minute]+":"+time[second]+"\e[0m\n";
        time_thread.join();
        ++second;
    }
@@ -463,10 +463,9 @@ piece::piece()
    }
    old_preview_block.assign(prelevel,"");
    next_preview_color.assign(prelevel,"");
-   for (int i=0; i!=prelevel; ++i) 
-        next_preview_piece.push_back(v);
+   next_preview_color.assign(prelevel,"");
+   next_preview_piece.assign(prelevel,v);
    printf("%c%c%c%c%c%c",27,'[','H',27,'[','J' );
-   loop(&piece::init);
    init_color();
    bd.border();
    bd.matrix();
@@ -637,7 +636,7 @@ void piece::coordinate(vector<int>& lbox)
    }
 }
 
-void piece::draw_piece(int n, double dx, int dy)
+void piece::draw_piece(int n, int dx, int dy)
 {
    if (n)
    {
@@ -755,7 +754,7 @@ int piece::persig()
    int j=0;
    while ( ++j )
    {
-         if ( j != 1 ) wait(0);
+         if ( j != 1 ) wait(100);
          int sigswap=sig;
          sig=0;
          switch (sigswap)
@@ -843,7 +842,7 @@ void piece::drawbox()
    cout<<"\e["+cur_color+cur_shadow+"\e[0m\n"; 
 }
 
-int piece::move_piece(double dx, int dy)
+int piece::move_piece(int dx, int dy)
 {
    int len=locus.size();
    for (int i=0; i!=len; i+=2)
@@ -884,7 +883,7 @@ void piece::perplus(int dx, int dy)
    box=new_box;
 }
 
-void piece::move(double& dx, int& dy)
+void piece::move(int dx, int dy)
 {
    if (move_piece(dx, dy))
    {
@@ -903,17 +902,16 @@ void piece::move(double& dx, int& dy)
    } 
 }
 
-void piece::rotate(double& dx, int& dy)
+void piece::rotate(double dx, int dy)
 {     
    int m,n,p,q,mp,nq;
    tie(mp,nq)=trans.mid_point(box); 
    trans.abstract(box, m, n, 1, 2);
    trans.coordinate_transformation(dx, m, n); 
-   dx=dy=0;
    trans.abstract(trans.new_coordinate, p, q, 2, 1);
    trans.optimize(trans.new_box, {mp-p, nq-q});
    locus=trans.new_box;
-   if (move_piece(dx, dy))
+   if (move_piece(0, 0))
    {
        get_erase(); 
        coordinate(trans.new_box);
@@ -972,9 +970,9 @@ void board::notify()
    cout<<"\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
    cout<<"\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
    cout<<"\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.2\n";
+   cout<<"\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.3\n";
    string str8="\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 05/12/2013]";
+   string str9=to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 06/06/2013]";
    cout<<str8+str9<<endl;
 }
 
