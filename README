@@ -1,4 +1,5 @@
 Tetris Game // This one is under development (ported from the shell) 
+            // With some predefined features not available now 
             // Just enjoy the one developed in shell to get the full features 
             // As which is pretty good!
 ===============================================================================
@@ -6,6 +7,7 @@ Tetris Game // This one is under development (ported from the shell)
 #####################################################################
 #                                                                   #
 # License: Boost Ver 1.0+                                           #
+# Project: https://github.com/yongye/go                             #
 # Project: https://github.com/yongye/cpp                            #
 # Project: https://github.com/yongye/shell                          #
 # Author : YongYe <complex.invoke@gmail.com>                        #
