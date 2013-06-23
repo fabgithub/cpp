@@ -664,7 +664,7 @@ void piece::random_piece()
                box_color[k-i][j/2-toph] = color[RANDOM()%color.size()];
           }
      }
-     if ( count == k ) count=0;
+     if ( count == k ) count = 0;
 }
 
 void piece::coord_comp(int&x, int& y, int& u, int& v)
