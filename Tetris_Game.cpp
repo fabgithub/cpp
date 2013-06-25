@@ -547,7 +547,7 @@ void piece::loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int))
 string& piece::get_replace(string& src)
 { 
      size_t pos = 0;
-     while( (pos = src.find(unit, pos)) != string::npos ) 
+     while ( (pos = src.find(unit, pos)) != string::npos ) 
      {
              src.replace(pos, unit.size(), "  ");
              pos += unit.size(); 
