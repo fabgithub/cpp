@@ -15,7 +15,7 @@ Tetris Game // This one is under development (ported from the shell)
 #####################################################################
 
 Compile the source code :
-   g++ -std=c++11 -s -l boost_thread-mt -o Tetris_Game Tetris_Game.cpp 
+   g++ -std=c++11 -s -I /usr/local/boost_1_53_0/include -L /usr/local/boost_1_53_0/lib -l boost_thread -l boost_system -o Tetris_Game Tetris_Game.cpp
 
 Run the game :
    runlevel     :  Complexity of the pieces             ( Default value is 31 )
@@ -30,8 +30,8 @@ Run the game :
 
 Tested Platform : 
    [root@node ~]# cat /etc/redhat-release 
-   Fedora release 18 (Spherical Cow)
+   Fedora release 19 (Schr?dinger¡¯s Cat)
    [root@node ~]# uname -a
-   Linux node 3.8.11-200.fc18.x86_64 #1 SMP Wed May 1 19:44:27 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+   Linux node 3.9.8-300.fc19.x86_64 #1 SMP Thu Jun 27 19:24:23 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
    [root@node ~]# g++ --version | grep g++
-   g++ (GCC) 4.7.2 20121109 (Red Hat 4.7.2-8)
+   g++ (GCC) 4.8.1 20130603 (Red Hat 4.8.1-1)
