@@ -10,7 +10,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.1.4 02/20/2013 BeiJing China [Updated 06/30/2013]      //
+//   Version: 1.0.1.4 02/20/2013 BeiJing China [Updated 07/06/2013]      //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -24,7 +24,6 @@
 
 #include <map>
 #include <tuple>
-#include <atomic>
 #include <vector>
 #include <random>
 #include <cstdlib>
@@ -32,6 +31,7 @@
 #include <algorithm>
 #include <termios.h>
 #include <initializer_list>
+#include <boost/atomic.hpp>
 #include <boost/thread.hpp>
 using namespace std;
 using namespace boost;
@@ -150,7 +150,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.1.4 [Updated 06/30/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.1.4 [Updated 07/06/2013]" << endl;
             return 1;
        }
        else
@@ -970,7 +970,7 @@ void board::notify()
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
      cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.4\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 06/30/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/06/2013]";
      cout << str8+str9 << endl;
 }
 
