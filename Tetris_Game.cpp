@@ -386,10 +386,10 @@ void transpose::abstract(vector<int>& mid, int& i, int& j, int b, int d)
      tie(i, j) = mid_point(multiple(mid, b, d));
 }
 
-void transpose::optimize(vector<int>& new_box, initializer_list<int> ink)
+void transpose::optimize(vector<int>& new_box, initializer_list<int> coord)
 {
      int n = 0;
-     for (auto& j : ink)
+     for (auto& j : coord)
      {
           ++n;
           if ( j )
