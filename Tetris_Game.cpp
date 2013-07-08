@@ -10,7 +10,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.1.4 02/20/2013 BeiJing China [Updated 07/07/2013]      //
+//   Version: 1.0.1.5 02/20/2013 BeiJing China [Updated 07/08/2013]      //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -149,7 +149,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.1.4 [Updated 07/07/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.1.5 [Updated 07/08/2013]" << endl;
             return 1;
        }
        else
@@ -197,7 +197,7 @@ class transpose
       vector<int>& multiple(vector<int>&, int, int);
       void coordinate_transformation(double, int, int);
       void abstract(vector<int>&, int&, int&, int, int);
-      void optimize(vector<int>&, initializer_list<int>);
+      void optimize(vector<int>&, initializer_list<int>&&);
    protected:
       map<string, int> mid;
       vector<int> new_box, new_coordinate, first_coordinate;
@@ -207,7 +207,7 @@ class get_time
 {
    public:
       void current();
-      void resize(initializer_list<int> dhms);
+      void resize(initializer_list<int>&& dhms);
       void set_time(int&, int&, int value=60); 
    protected:
       int day = 0;
@@ -383,7 +383,7 @@ void transpose::abstract(vector<int>& mid, int& i, int& j, int b, int d)
      tie(i, j) = mid_point(multiple(mid, b, d));
 }
 
-void transpose::optimize(vector<int>& new_box, initializer_list<int> coord)
+void transpose::optimize(vector<int>& new_box, initializer_list<int>&& coord)
 {
      int n = 0;
      for (auto& j : coord)
@@ -407,7 +407,7 @@ void get_time::set_time(int& lhs, int& rhs, int value)
      time[lhs] = to_string(lhs);
 }
 
-void get_time::resize(initializer_list<int> dhms)
+void get_time::resize(initializer_list<int>&& dhms)
 {
      for (auto& p : dhms)
      {
@@ -965,9 +965,9 @@ void board::notify()
      cout << "\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
      cout << "\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.4\n";
+     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.5\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/07/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/08/2013]";
      cout << str8+str9 << endl;
 }
 
