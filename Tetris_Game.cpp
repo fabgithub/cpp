@@ -26,7 +26,6 @@
 #include <tuple>
 #include <vector>
 #include <random>
-#include <cstdlib>
 #include <iostream>
 #include <algorithm>
 #include <termios.h>
@@ -780,7 +779,7 @@ int piece::getsig()
     char arry[3] = "";
     while ( true )
     {
-       key = getchar();
+       key = cin.get();
        sig = 0;
        arry[0] = arry[1]; 
        arry[1] = arry[2];
