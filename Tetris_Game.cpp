@@ -171,16 +171,16 @@ class board
 
 class max_distance
 {
-   protected:
+   public:
+      void clear();
+      void max_vertical_coordinate();
+      int max_height(vector<vector<int>>&);
+   private:
       struct data
       {
          int value;
          data():value(0){} 
       };
-   public:
-      void clear();
-      void max_vertical_coordinate();
-      int max_height(vector<vector<int>>&);
    protected:
       vector<int> max;
       map<int, data> col;
