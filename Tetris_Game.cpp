@@ -448,10 +448,8 @@ piece::piece()
     lower = height+toph;
     wthm = 2*width+modw;
     dist = modw+wthm+3;
-    vector<int> v;
-    vector<string> u;
-    box_map.assign(height, v);
-    box_color.assign(height, u);
+    box_map.assign(height, vector<int>());
+    box_color.assign(height, vector<string>());
     for (int i = 0; i != height; ++i)
     {
          box_map[i].assign(width, 0);
@@ -459,7 +457,7 @@ piece::piece()
     }
     old_preview_block.assign(prelevel,"");
     next_preview_color.assign(prelevel,"");
-    next_preview_piece.assign(prelevel,v);
+    next_preview_piece.assign(prelevel, vector<int>());
     printf("%c%c%c%c%c%c",27,'[','H',27,'[','J' );
     init_color();
     bd.border();
