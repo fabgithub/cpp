@@ -14,6 +14,8 @@ Tetris Game // This one is under development (ported from the shell)
 #                                                                   #
 #####################################################################
 
+Detailed game Screenshots and the core Algorithm is offered by the one developed in Shell
+
 Compile the source code :
    g++ -std=c++11 -s -I /usr/local/boost_1_54_0/include -L /usr/local/boost_1_54_0/lib -l boost_thread -l boost_system -o Tetris_Game Tetris_Game.cpp
 
