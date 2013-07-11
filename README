@@ -32,6 +32,6 @@ Tested Platform :
    [root@node ~]# cat /etc/redhat-release 
    Fedora release 19 (Schr?dinger¡¯s Cat)
    [root@node ~]# uname -a
-   Linux node 3.9.8-300.fc19.x86_64 #1 SMP Thu Jun 27 19:24:23 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+   Linux node 3.9.9-301.fc19.x86_64 #1 SMP Thu Jul 4 15:10:36 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
    [root@node ~]# g++ --version | grep g++
    g++ (GCC) 4.8.1 20130603 (Red Hat 4.8.1-1)
