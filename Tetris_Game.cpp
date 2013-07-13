@@ -10,7 +10,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.1.5 02/20/2013 BeiJing China [Updated 07/08/2013]      //
+//   Version: 1.0.1.5 02/20/2013 BeiJing China [Updated 07/13/2013]      //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -149,7 +149,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.1.5 [Updated 07/08/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.1.5 [Updated 07/13/2013]" << endl;
             return 1;
        }
        else
@@ -799,28 +799,17 @@ int piece::getsig()
        {
             switch (key)
             {
-               case 'W': 
-               case 'w': sig = 23; break;
-               case 'T':
-               case 't': sig = 24; break;
-               case 'M':
-               case 'm': sig = 25; break;
-               case 'N':
-               case 'n': sig = 26; break;
-               case 'S':
-               case 's': sig = 29; break;
-               case 'A':
-               case 'a': sig = 27; break;
-               case 'D':
-               case 'd': sig = 28; break;
-               case 'U':
-               case 'u': sig = 30; break;
-               case 'P':
-               case 'p': sig = 19; break;
-               case 'R':
-               case 'r': sig = 18; break;
-               case 'Q':
-               case 'q': runleave(1); return 0;
+               case 'W': case 'w': sig = 23; break;
+               case 'T': case 't': sig = 24; break;
+               case 'M': case 'm': sig = 25; break;
+               case 'N': case 'n': sig = 26; break;
+               case 'S': case 's': sig = 29; break;
+               case 'A': case 'a': sig = 27; break;
+               case 'D': case 'd': sig = 28; break;
+               case 'U': case 'u': sig = 30; break;
+               case 'P': case 'p': sig = 19; break;
+               case 'R': case 'r': sig = 18; break;
+               case 'Q': case 'q': runleave(1); return 0;
             }
        }
        if ( sig == 22 ) { runleave(1); return 0;}
@@ -965,7 +954,7 @@ void board::notify()
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
      cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.5\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/08/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/13/2013]";
      cout << str8+str9 << endl;
 }
 
