@@ -899,10 +899,7 @@ void piece::rotate(double dx, int dy)
 
 void piece::transform(double dx, int dy)
 { 
-     if ( dy != 1 )
-          move(dx, dy);
-     else
-          rotate(dx, dy); 
+     dy != 1 ? move(dx, dy) : rotate(dx, dy); 
 }
 
 void board::border()
