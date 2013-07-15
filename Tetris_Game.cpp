@@ -346,14 +346,8 @@ void transpose::addbox(vector<int>& new_box, int k, int j)
 
 tuple<int, int> transpose::mid_point(vector<int>& mid)
 {
-    if ( mid.size()%4 )
-    {
-         return make_tuple(mid[mid.size()/2-1], mid[mid.size()/2]);
-    }
-    else
-    {
-         return make_tuple(mid[mid.size()/2], mid[mid.size()/2+1]);
-    }
+    int len=mid.size()/2;
+    return mid.size()%4? make_tuple(mid[len-1], mid[len]):make_tuple(mid[len], mid[len+1]);
 }
 
 vector<int>& transpose::multiple(vector<int>& cur_box, int b, int d)
