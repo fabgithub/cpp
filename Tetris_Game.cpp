@@ -347,7 +347,7 @@ void transpose::addbox(vector<int>& new_box, int k, int j)
 tuple<int, int> transpose::mid_point(vector<int>& mid)
 {
     int len=mid.size()/2;
-    return mid.size()%4?make_tuple(mid[len-1], mid[len]):make_tuple(mid[len], mid[len+1]);
+    return mid.size()%4 ? make_tuple(mid[len-1], mid[len]) : make_tuple(mid[len], mid[len+1]);
 }
 
 vector<int>& transpose::multiple(vector<int>& cur_box, int b, int d)
@@ -469,10 +469,7 @@ void piece::check(int i, int j)
 void piece::update(int i, int j)
 { 
      string pos = "\e["+to_string(i)+";"+to_string(j)+"H";
-     if ( ! box_map[i-modw][j/2-toph] ) 
-          cout << pos+"  ";
-     else
-          cout << pos+"\e["+box_color[i-modw][j/2-toph]+unit+"\e[0m";
+     cout << (box_map[i-modw][j/2-toph] ? pos+"\e["+box_color[i-modw][j/2-toph]+unit+"\e[0m" : pos+"  ");
 }
 
 int piece::drop_bottom()
