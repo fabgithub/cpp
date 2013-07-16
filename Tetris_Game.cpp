@@ -10,7 +10,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.1.5 02/20/2013 BeiJing China [Updated 07/15/2013]      //
+//   Version: 1.0.1.5 02/20/2013 BeiJing China [Updated 07/16/2013]      //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -149,7 +149,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.1.5 [Updated 07/15/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.1.5 [Updated 07/16/2013]" << endl;
             return 1;
        }
        else
@@ -339,9 +339,7 @@ vector<int>& transpose::unique(vector<int>& new_coordinate)
 void transpose::addbox(vector<int>& new_box, int k, int j)
 {
      for (int i = 0; i != new_box.size(); i += 2)
-     {
           new_box[i+k] += j;
-     }
 }
 
 tuple<int, int> transpose::mid_point(vector<int>& mid)
@@ -354,9 +352,7 @@ vector<int>& transpose::multiple(vector<int>& cur_box, int b, int d)
 {
     new_box = cur_box;
     for (int i = 0; i != cur_box.size()-2; i += 2)
-    {
          new_box[i+3] = new_box[i+1]+(cur_box[i+3]-cur_box[i+1])*b/d;
-    }
     return new_box;
 }
 
@@ -591,9 +587,7 @@ string& old_preview_box, int n, int p, string& new_preview_color0, string& new_p
 void piece::get_invoke(int n)
 {
      for (int i = 0; i != prelevel-1; ++i)
-     {
           pipe_piece(next_preview_piece[i], next_preview_piece[i+1], old_preview_block[i], 12*(2-i), n, next_preview_color[i], next_preview_color[i+1]);
-     }
 }
             
 void piece::show_piece(int n)
@@ -615,9 +609,7 @@ void piece::coordinate(vector<int>& lbox)
      cur_shadow = "";
      locus = lbox;
      for (int i = 0; i != locus.size(); i += 2)
-     {    
           cur_shadow += "\e["+to_string(locus[i])+";"+to_string(locus[i+1])+"H"+unit;
-     }
 }
 
 void piece::draw_piece(int n, int dx, int dy)
@@ -942,7 +934,7 @@ void board::notify()
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
      cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.5\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/15/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/16/2013]";
      cout << str8+str9 << endl;
 }
 
