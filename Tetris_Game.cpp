@@ -10,7 +10,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.1.5 02/20/2013 BeiJing China [Updated 07/16/2013]      //
+//   Version: 1.0.1.5 02/20/2013 BeiJing China [Updated 07/21/2013]      //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -149,7 +149,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.1.5 [Updated 07/16/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.1.5 [Updated 07/21/2013]" << endl;
             return 1;
        }
        else
@@ -172,8 +172,8 @@ class board
 class max_distance
 {
    public:
-      void clear();
-      void max_vertical_coordinate();
+      max_distance& clear();
+      max_distance& max_vertical_coordinate();
       int max_height(vector<vector<int>>&);
    private:
       struct data
@@ -280,14 +280,15 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void max_distance::clear()
+max_distance& max_distance::clear()
 {
      max.clear();
      col.clear();
      row.clear();
+     return *this;
 }
 
-void max_distance::max_vertical_coordinate()
+max_distance& max_distance::max_vertical_coordinate()
 {
      for (int i = 0; i != box.size(); i += 2)
      {   
@@ -304,6 +305,7 @@ void max_distance::max_vertical_coordinate()
           max.push_back(p.first);
           max.push_back(p.second);
      }
+     return *this;
 }
 
 int max_distance::max_height(vector<vector<int>>& box_map)
@@ -470,9 +472,7 @@ void piece::update(int i, int j)
 
 int piece::drop_bottom()
 {
-    dists.clear();
-    dists.max_vertical_coordinate();
-    return dists.max_height(box_map);
+    return dists.clear().max_vertical_coordinate().max_height(box_map);
 }
 
 vector<int>& piece::get_piece()
@@ -934,7 +934,7 @@ void board::notify()
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
      cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.1.5\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/16/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/21/2013]";
      cout << str8+str9 << endl;
 }
 
