@@ -1,5 +1,5 @@
 // Tetris Game // This one is under development (ported from the shell)
-               // With some predefined features not available now
+               // With few predefined features not available now
                // Just enjoy the one developed in shell to get the full features
                // As which is pretty good!
 
