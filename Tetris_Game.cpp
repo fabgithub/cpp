@@ -574,11 +574,11 @@ string& old_preview_box, int n, int p, string& new_preview_color0, string& new_p
      }
      else 
      {
-        next_preview_box0 = next_preview_box1;
-        new_preview_color0 = new_preview_color1;
-        get_preview(next_preview_box1, old_preview_box, n, new_preview_color1);
+        next_preview_box0 = std::move(next_preview_box1);
+        new_preview_color0 = std::move(new_preview_color1);
+        get_preview(next_preview_box0, old_preview_box, n, new_preview_color0);
      }
-     old_preview_box = cur_preview_block;
+     old_preview_box = std::move(cur_preview_block);
 }
 
 void piece::get_invoke(int n)
@@ -597,8 +597,8 @@ void piece::show_piece(int n)
      next_preview_piece[end] = get_piece();
      next_preview_color[end] = color[RANDOM()%color.size()];
      get_preview(box, old_preview_block[end], 12*(2-end), next_preview_color[end]);
-     old_preview_block[end] = cur_preview_block;
-     box = preview_box;
+     old_preview_block[end] = std::move(cur_preview_block);
+     box = std::move(preview_box);
 }
 
 void piece::coordinate(vector<int>& lbox)
@@ -798,8 +798,8 @@ int piece::getsig()
 
 void piece::drawbox()
 { 
-     old_shadow = cur_shadow; 
-     cout << "\e["+cur_color+cur_shadow+"\e[0m\n"; 
+     old_shadow = std::move(cur_shadow); 
+     cout << "\e["+cur_color+old_shadow+"\e[0m\n"; 
 }
 
 int piece::move_piece(int dx, int dy)
@@ -836,11 +836,10 @@ void piece::ghost_cross()
 
 void piece::perplus(int dx, int dy)
 {
-     if ( locus.size() == 2 )  ghost_cross();
-     vector<int> new_box(box);
-     trans.optimize(new_box, {dx, dy});
-     coordinate(new_box);
-     box = new_box;
+     if ( locus.size() == 2 ) 
+          ghost_cross();
+     trans.optimize(box, {dx, dy});
+     coordinate(box);
 }
 
 void piece::move(int dx, int dy)
