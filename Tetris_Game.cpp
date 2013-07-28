@@ -583,8 +583,10 @@ string& old_preview_box, int n, int p, string& new_preview_color0, string& new_p
 
 void piece::get_invoke(int n)
 {
-     for (int i = 0; i != prelevel-1; ++i)
-          pipe_piece(next_preview_piece[i], next_preview_piece[i+1], old_preview_block[i], 12*(2-i), n, next_preview_color[i], next_preview_color[i+1]);
+     for (int i = 0; i != prelevel-1; ++i) {
+          pipe_piece(next_preview_piece[i], next_preview_piece[i+1], 
+          old_preview_block[i], 12*(2-i), n, next_preview_color[i], next_preview_color[i+1]);
+     }
 }
             
 void piece::show_piece(int n)
