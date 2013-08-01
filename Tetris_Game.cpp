@@ -7,7 +7,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.2 02/20/2013 BeiJing China [Updated 07/30/2013]        //
+//   Version: 1.0.2 02/20/2013 BeiJing China [Updated 08/01/2013]        //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -146,7 +146,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.2 [Updated 07/30/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.2 [Updated 08/01/2013]" << endl;
             return 1;
        }
        else
@@ -491,19 +491,13 @@ void piece::init_color()
      for (int i = 0; i != 9; ++i)
      {
           for (int j = 0;  j != 9; ++j)
-          {
-               string s = "1;3"+to_string(i)+";4"+to_string(j)+"m";
-               color.push_back(s);
-          }
+               color.push_back("1;3"+to_string(i)+";4"+to_string(j)+"m");
      }
    
      for (int i = 0, j = 38; i != 2; ++i, j += 10)
      {
           for (int k = 0; k != 256; ++k)
-          {
-               string s = to_string(j)+";5;"+to_string(k)+";1m";
-               color.push_back(s);
-          }
+               color.push_back(to_string(j)+";5;"+to_string(k)+";1m");
      }
 }
 
@@ -930,7 +924,7 @@ void board::notify()
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
      cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.2\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 07/30/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 08/01/2013]";
      cout << str8+str9 << endl;
 }
 
