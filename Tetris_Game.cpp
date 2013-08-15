@@ -7,7 +7,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.2 02/20/2013 BeiJing China [Updated 08/01/2013]        //
+//   Version: 1.0.3 02/20/2013 BeiJing China [Updated 08/15/2013]        //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -21,16 +21,15 @@
 
 #include <map>
 #include <tuple>
-#include <vector>
+#include <atomic>
 #include <random>
+#include <thread>
+#include <vector>
 #include <iostream>
 #include <algorithm>
 #include <termios.h>
 #include <initializer_list>
-#include <boost/atomic.hpp>
-#include <boost/thread.hpp>
 using namespace std;
-using namespace boost;
 
 const int box0[2] {4, 30};
 const int box1[4] {4, 30, 4, 32};
@@ -103,7 +102,7 @@ void disable_waiting_for_enter()
 
 void wait(int n)
 {
-     this_thread::sleep(boost::posix_time::milliseconds(n));
+     this_thread::sleep_for(chrono::milliseconds(n));
 }
 
 void runleave(int n)
@@ -146,7 +145,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.2 [Updated 08/01/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.3 [Updated 08/15/2013]" << endl;
             return 1;
        }
        else
@@ -176,7 +175,7 @@ class max_distance
       struct data
       {
          int value;
-         data():value(0){} 
+         data():value{0}{} 
       };
    protected:
       vector<int> max;
@@ -273,6 +272,8 @@ int main(int argc, char* argv[])
     get_time time;
     thread t0{&get_time::current, &time};
     thread t1{&piece::persig, &pg};
+    t0.detach();
+    t1.detach();
     pg.getsig();
     return 0;
 }
@@ -437,8 +438,8 @@ piece::piece()
     lower = height+toph;
     wthm = 2*width+modw;
     dist = modw+wthm+3;
-    box_map.assign(height, vector<int>());
-    box_color.assign(height, vector<string>());
+    box_map.assign(height, vector<int>{});
+    box_color.assign(height, vector<string>{});
     for (int i = 0; i != height; ++i)
     {
          box_map[i].assign(width, 0);
@@ -827,7 +828,8 @@ void piece::ghost_cross()
 {
      int i = locus[0];
      int j = locus[1];
-     if ( box_map[i-modw][j/2-toph] ) cout << "\e["+to_string(i)+";"+to_string(j)+"H\e["+box_color[i-modw][j/2-toph]+unit+"\e[0m\n";
+     if ( box_map[i-modw][j/2-toph] ) 
+          cout << "\e["+to_string(i)+";"+to_string(j)+"H\e["+box_color[i-modw][j/2-toph]+unit+"\e[0m\n";
 }
 
 void piece::perplus(int dx, int dy)
@@ -922,9 +924,9 @@ void board::notify()
      cout << "\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
      cout << "\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.2\n";
+     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.3\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 08/01/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 08/15/2013]";
      cout << str8+str9 << endl;
 }
 
