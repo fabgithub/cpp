@@ -14,7 +14,7 @@ Tetris Game // All the features except pause and resume are available now
 Detailed game Screenshots and the core Algorithm were offered by the one developed in Shell
 
 Compile the source code :
-   g++ -std=c++11 -s -I /usr/local/boost_1_54_0/include -L /usr/local/boost_1_54_0/lib -l boost_thread -l boost_system -o Tetris_Game Tetris_Game.cpp
+   g++ -std=c++11 -s -l pthread -o Tetris_Game Tetris_Game.cpp
 
 Run the game :
    runlevel     :  Complexity of the pieces             ( Default value is 31 )
@@ -31,6 +31,6 @@ Tested Platform :
    [root@node ~]# cat /etc/redhat-release 
    Fedora release 19 (Schr?dinger¡¯s Cat)
    [root@node ~]# uname -a
-   Linux node 3.10.4-300.fc19.x86_64 #1 SMP Tue Jul 30 11:29:05 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+   Linux node 3.10.5-201.fc19.x86_64 #1 SMP Wed Aug 7 16:25:24 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
    [root@node ~]# g++ --version | grep g++
    g++ (GCC) 4.8.1 20130603 (Red Hat 4.8.1-1)
