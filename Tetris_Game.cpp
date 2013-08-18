@@ -176,7 +176,7 @@ class max_distance
          int value;
          data():value{0}{} 
       };
-   protected:
+   private:
       vector<int> max;
       map<int, data> col;
       map<int, pair<int, int>> row;
@@ -193,7 +193,7 @@ class transpose
       void coordinate_transformation(double, int, int);
       void abstract(vector<int>&, int&, int&, int, int);
       void optimize(vector<int>&, initializer_list<int>&&);
-   protected:
+   private:
       map<string, int> mid;
       vector<int> new_box, new_coordinate, first_coordinate;
 };
@@ -204,7 +204,7 @@ class get_time
       void current();
       void resize(initializer_list<int>&& dhms);
       void set_time(int&, int&, int value=60); 
-   protected:
+   private:
       int day = 0;
       int hour = 0;
       int minute = 0;
@@ -249,7 +249,7 @@ class piece
       void get_preview(vector<int>&, string&, int, string&);
       void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
       void pipe_piece(vector<int>&, vector<int>&, string&, int, int, string&, string&);
-   protected:
+   private:
       board bd;
       int line = 0;
       int count = 0;
