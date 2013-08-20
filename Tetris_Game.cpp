@@ -7,7 +7,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.3 02/20/2013 BeiJing China [Updated 08/18/2013]        //
+//   Version: 1.0.4 02/20/2013 BeiJing China [Updated 08/20/2013]        //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -144,7 +144,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.3 [Updated 08/18/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.4 [Updated 08/20/2013]" << endl;
             return 1;
        }
        else
@@ -168,8 +168,13 @@ class max_distance
 {
    public:
       max_distance& clear();
-      max_distance& max_vertical_coordinate();
+      max_distance()=default;
+      max_distance(max_distance&&)=delete;
       int max_height(vector<vector<int>>&);
+      max_distance& max_vertical_coordinate();
+      max_distance(const max_distance&)=delete;
+      max_distance& operator=(max_distance&&)=delete;
+      max_distance& operator=(const max_distance&)=delete;
    private:
       struct data
       {
@@ -186,9 +191,14 @@ class transpose
 {
    public:
       friend class piece;
+      transpose()=default;
+      transpose(transpose&&)=delete;
       vector<int>& unique(vector<int>&);
+      transpose(const transpose&)=delete;
       void addbox(vector<int>&, int, int);
       tuple<int, int> mid_point(vector<int>&);
+      transpose& operator=(transpose&&)=delete;
+      transpose& operator=(const transpose&)=delete;
       vector<int>& multiple(vector<int>&, int, int);
       void coordinate_transformation(double, int, int);
       void abstract(vector<int>&, int&, int&, int, int);
@@ -202,8 +212,13 @@ class get_time
 {
    public:
       void current();
-      void resize(initializer_list<int>&& dhms);
+      get_time()=default;
+      get_time(get_time&&)=delete;
+      get_time(const get_time&)=delete;
+      get_time& operator=(get_time&&)=delete;
       void set_time(int&, int&, int value=60); 
+      void resize(initializer_list<int>&& dhms);
+      get_time& operator=(const get_time&)=delete;
    private:
       int day = 0;
       int hour = 0;
@@ -218,8 +233,8 @@ class piece
 {
    public:
       piece();
-      int persig();
       int getsig();
+      int persig();
       void drawbox();
       void get_erase();
       void clear_row();
@@ -227,23 +242,27 @@ class piece
       void init_color();
       void ghost_cross();
       void init(int, int);
+      void move(int, int);
       void random_piece();
       void check(int, int);
       void get_invoke(int);
       void show_piece(int);
       void shift_piece(int);
       void update(int, int);
+      piece(piece&&)=delete;
       void perplus(int, int);
       vector<int>& get_piece();
-      void move(int, int);
       void rotate(double, int);
       int move_piece(int, int);
+      piece(const piece&)=delete;
       void coordinate(vector<int>&);
+      void draw_piece(int, int, int);
       void transform(double, int dy=1);
       string& get_replace(string& str);
-      void draw_piece(int, int, int);
+      piece& operator=(piece&&)=delete;
       void bomb(int x, int y, int size);
       void top_point(vector<int>& cur_box);
+      piece& operator=(const piece&)=delete;
       void coord_comp(int&, int&, int&, int&);
       void get_point(vector<int>&, int&, int&, int);
       void get_preview(vector<int>&, string&, int, string&);
@@ -923,9 +942,9 @@ void board::notify()
      cout << "\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
      cout << "\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.3\n";
+     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.4\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 08/18/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 08/20/2013]";
      cout << str8+str9 << endl;
 }
 
