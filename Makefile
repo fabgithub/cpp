@@ -6,6 +6,7 @@ LDFLAGS = -l pthread
 
 Tetris_Game: Tetris_Game.o
 	${CC} ${CFLAGS} ${LDFLAGS} -o Tetris_Game Tetris_Game.o
+	rm -f Tetris_Game.o 
 
 Tetris_Game.o: Tetris_Game.cpp
 	${CC} ${CFLAGS} -c Tetris_Game.cpp 
