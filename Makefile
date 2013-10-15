@@ -1,15 +1,18 @@
 # Makefile ( C++11 needed )
 
 CC = g++
+PG = Tetris_Game
+SOURCE = Tetris_Game.cpp
+OBJECTS = Tetris_Game.o
 CFLAGS = -std=c++11 -s
 LDFLAGS = -l pthread
 
-Tetris_Game: Tetris_Game.o
-	${CC} ${CFLAGS} ${LDFLAGS} -o Tetris_Game Tetris_Game.o
-	rm -f Tetris_Game.o 
+${PG}: ${OBJECTS}
+	${CC} ${CFLAGS} ${LDFLAGS} -o ${PG} ${OBJECTS}
+	rm -f ${OBJECTS}
 
-Tetris_Game.o: Tetris_Game.cpp
-	${CC} ${CFLAGS} -c Tetris_Game.cpp 
+${OBJECTS}: ${SOURCE}
+	${CC} ${CFLAGS} -c ${SOURCE}
 
 clean:
-	rm -f Tetris_Game Tetris_Game.o 
+	rm -f ${PG} ${OBJECTS}
