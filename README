@@ -17,7 +17,7 @@ Compile the source code :
    Run
        make
    Or
-       g++ -std=c++11 -s -l pthread -o Tetris_Game Tetris_Game.cpp
+       g++ -std=c++11 -s -Wall -O3 -l pthread -o Tetris_Game Tetris_Game.cpp
 
 Run the game :
    runlevel     :  Complexity of the pieces             ( Default value is 31 )
@@ -34,6 +34,6 @@ Tested Platform :
    [root@node ~]# cat /etc/redhat-release 
    Fedora release 19 (Schr?dinger¡¯s Cat)
    [root@node ~]# uname -a
-   Linux node 3.10.6-200.fc19.x86_64 #1 SMP Mon Aug 12 14:49:42 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+   Linux node 3.11.3-201.fc19.x86_64 #1 SMP Thu Oct 3 00:47:03 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
    [root@node ~]# g++ --version | grep g++
    g++ (GCC) 4.8.1 20130603 (Red Hat 4.8.1-1)
