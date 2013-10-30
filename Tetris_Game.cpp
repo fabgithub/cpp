@@ -7,7 +7,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.4 02/20/2013 BeiJing China [Updated 10/15/2013]        //
+//   Version: 1.0.5 02/20/2013 BeiJing China [Updated 10/30/2013]        //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -144,7 +144,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.4 [Updated 10/15/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.5 [Updated 10/30/2013]" << endl;
             return 1;
        }
        else
@@ -364,9 +364,8 @@ void transpose::addbox(vector<int>& new_box, int k, int j)
 
 tuple<int, int> transpose::mid_point(vector<int>& mid)
 {
-    int len=mid.size()/2;
-    int mod=mid.size()%4;
-    return make_tuple(mid[len-mod/2], mid[len-mod/2+1]);
+    int len = mid.size()/2-(mid.size()%4)/2;
+    return make_tuple(mid[len], mid[len+1]);
 }
 
 vector<int>& transpose::multiple(vector<int>& cur_box, int b, int d)
@@ -944,9 +943,9 @@ void board::notify()
      cout << "\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
      cout << "\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.4\n";
+     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.5\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 10/15/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 10/30/2013]";
      cout << str8+str9 << endl;
 }
 
