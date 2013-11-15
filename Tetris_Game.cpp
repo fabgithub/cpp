@@ -7,7 +7,7 @@
 //   Project: https://github.com/yongye/cpp                              //
 //   Project: https://github.com/yongye/shell                            //
 //   Author : YongYe <complex.invoke@gmail.com>                          //
-//   Version: 1.0.5 02/20/2013 BeiJing China [Updated 10/30/2013]        //
+//   Version: 1.0.6 02/20/2013 BeiJing China [Updated 11/16/2013]        //
 //                                                                       //
 //   Algorithm:                                                          //
 //                                                                       //
@@ -144,7 +144,7 @@ int get_args(vector<string>& args)
        }
        else if ( str == "-v" || str == "--version" )
        {
-            cout << "Tetris Game  Version 1.0.5 [Updated 10/30/2013]" << endl;
+            cout << "Tetris Game  Version 1.0.6 [Updated 11/16/2013]" << endl;
             return 1;
        }
        else
@@ -176,15 +176,7 @@ class max_distance
       max_distance& operator=(max_distance&&)=delete;
       max_distance& operator=(const max_distance&)=delete;
    private:
-      struct data
-      {
-         int value;
-         data():value{0}{} 
-      };
-   private:
-      vector<int> max;
-      map<int, data> col;
-      map<int, pair<int, int>> row;
+      vector<int> max, col;
 };
       
 class transpose
@@ -192,8 +184,8 @@ class transpose
    public:
       friend class piece;
       transpose()=default;
+      void unique(vector<int>&);
       transpose(transpose&&)=delete;
-      vector<int>& unique(vector<int>&);
       transpose(const transpose&)=delete;
       void addbox(vector<int>&, int, int);
       tuple<int, int> mid_point(vector<int>&);
@@ -204,8 +196,7 @@ class transpose
       void abstract(vector<int>&, int&, int&, int, int);
       void optimize(vector<int>&, initializer_list<int>&&);
    private:
-      map<string, int> mid;
-      vector<int> new_box, new_coordinate, first_coordinate;
+      vector<int> mid, new_box, new_coordinate;
 };
 
 class get_time
@@ -216,15 +207,14 @@ class get_time
       get_time(get_time&&)=delete;
       get_time(const get_time&)=delete;
       get_time& operator=(get_time&&)=delete;
-      void set_time(int&, int&, int value=60); 
-      void resize(initializer_list<int>&& dhms);
+      void set_time(int&, int&, size_t, int value=60); 
       get_time& operator=(const get_time&)=delete;
    private:
       int day = 0;
       int hour = 0;
       int minute = 0;
       int second = 0;
-      map<int, string> time;
+      vector<string> time;
       string color = "\e[1;33m";
       string line = "";
 };
@@ -300,29 +290,41 @@ max_distance& max_distance::clear()
 {
      max.clear();
      col.clear();
-     row.clear();
      return *this;
 }
 
 max_distance& max_distance::max_vertical_coordinate()
 {
+     size_t len = 0, j, k;
+     col.assign(box.size(), 0);
      for (size_t i = 0; i != box.size(); i += 2)
      {   
           int q = box[i];
           int p = box[i+1];
-          int& value = col[p].value;
-          if ( value == 0 ) value = box[i];
-          if ( value < q ) value = q;
-          row[p] = {value, p};
+          for (j = 0; j != len; ++j) 
+               if ( col[j] == p )  break;
+         
+          k = 2*j;
+          if ( j == len )
+          {
+               ++len;
+               col[k] = p;
+               col[k+1] = q;
+          }
+          if ( col[k+1] < q )
+               col[k+1] = q;
+          col[k] = p;
      }
-     for (auto& key : row)
+     max.assign(2*len, 0);
+     for (size_t i = 0; i != len; ++i)
      {
-          auto p = key.second;
-          max.push_back(p.first);
-          max.push_back(p.second);
+          k = 2*i; 
+          max[k] = col[k+1];
+          max[k+1] = col[k];
      }
      return *this;
 }
+
 
 int max_distance::max_height(vector<vector<int>>& box_map)
 {   
@@ -340,32 +342,41 @@ int max_distance::max_height(vector<vector<int>>& box_map)
     return 0;
 }     
 
-vector<int>& transpose::unique(vector<int>& new_coordinate)
+void transpose::unique(vector<int>& vec)
 {
-    mid.clear();
-    first_coordinate.clear();
-    for (size_t i = 0; i != new_coordinate.size(); i += 2)
-    {
-         string key = to_string(new_coordinate[i])+"::"+to_string(new_coordinate[i+1]);
-         if ( !mid[key]++ )
-         {
-              first_coordinate.push_back(new_coordinate[i]);
-              first_coordinate.push_back(new_coordinate[i+1]);
-         }
-    }
-    return first_coordinate;
+     size_t coor = vec.size();
+     mid.clear();
+     size_t len = 0, j, k;
+     for (size_t i = 0; i != coor; i += 2)
+     {
+          auto p = vec[i];
+          auto q = vec[i+1];
+          for (j = 0; j != len; ++j)
+          {
+               k = 2*j;
+               if ( mid[k] == p && mid[k+1] == q )
+                    break;
+          }
+          if ( j == len )
+          {
+               ++len;
+               mid.push_back(p);
+               mid.push_back(q);
+          } 
+     }
+     vec = mid;
 }
 
-void transpose::addbox(vector<int>& new_box, int k, int j)
+void transpose::addbox(vector<int>& cur_box, int k, int j)
 {
-     for (size_t i = 0; i != new_box.size(); i += 2)
-          new_box[i+k] += j;
+     for (size_t i = 0; i != cur_box.size(); i += 2)
+          cur_box[i+k] += j;
 }
 
-tuple<int, int> transpose::mid_point(vector<int>& mid)
+tuple<int, int> transpose::mid_point(vector<int>& cur_box)
 {
-    int len = mid.size()/2-(mid.size()%4)/2;
-    return make_tuple(mid[len], mid[len+1]);
+    int len = cur_box.size()/2-(cur_box.size()%4)/2;
+    return make_tuple(cur_box[len], cur_box[len+1]);
 }
 
 vector<int>& transpose::multiple(vector<int>& cur_box, int b, int d)
@@ -385,15 +396,15 @@ void transpose::coordinate_transformation(double dx, int m, int n)
           new_coordinate[i] = m+new_box[i+1]-n;                  // a=-pi/2 zoomx=+1 zoomy=+1 dx=0 dy=0
           new_coordinate[i+1] = (new_box[i]-m)*dx+n;             // a=-pi/2 zoomx=-1 zoomy=+1 dx=0 dy=0 
      }                                                           // a=+pi/2 zoomx=+1 zoomy=-1 dx=0 dy=0
-     if ( dx == 0.5 ) new_coordinate=unique(new_coordinate);
+     if ( dx == 0.5 ) unique(new_coordinate);
 }
 
-void transpose::abstract(vector<int>& mid, int& i, int& j, int b, int d)
+void transpose::abstract(vector<int>& cur_box, int& i, int& j, int b, int d)
 {
-     tie(i, j) = mid_point(multiple(mid, b, d));
+     tie(i, j) = mid_point(multiple(cur_box, b, d));
 }
 
-void transpose::optimize(vector<int>& new_box, initializer_list<int>&& coord)
+void transpose::optimize(vector<int>& cur_box, initializer_list<int>&& coord)
 {
      int n = 0;
      for (auto& j : coord)
@@ -402,32 +413,24 @@ void transpose::optimize(vector<int>& new_box, initializer_list<int>&& coord)
           if ( j )
           {
                int k = n>1?1:0;
-               addbox(new_box, k, j);
+               addbox(cur_box, k, j);
           }
      }
 }
 
-void get_time::set_time(int& lhs, int& rhs, int value)
+void get_time::set_time(int& lhs, int& rhs, size_t i, int value)
 {
      if ( lhs == value )
      {
           ++rhs;
           lhs = 0;
      }
-     time[lhs] = to_string(lhs);
-}
-
-void get_time::resize(initializer_list<int>&& dhms)
-{
-     for (auto& p : dhms)
-     {
-          string s = to_string(p);
-          time[p] = ( s.size() != 2 ) ? "0"+s : s;
-     }
+     time[i] = to_string(lhs/10)+to_string(lhs%10);
 }
 
 void get_time::current()
 {
+     time.assign(4, "");
      int j = width-9;
      for (int k = 0; k != j; ++k) line += '-';
      cout << "\e[2;6H"+color+line+"[Time \e[2;"+to_string(23+j)+"H"+color+"]"+line+"\e[0m\n";
@@ -436,12 +439,11 @@ void get_time::current()
         if ( sig == 22 ) { runleave(0); break; }
         thread time_thread(wait, 1000);
         time.clear();
-        set_time(second, minute);
-        set_time(minute, hour);
-        set_time(hour, day, 24);
-        time[day]=to_string(day);
-        resize({day, hour, minute, second});
-        cout << "\e[2;"+to_string(12+j)+"H"+color+time[day]+":"+time[hour]+":"+time[minute]+":"+time[second]+"\e[0m\n";
+        set_time(second, minute, 0);
+        set_time(minute, hour, 1);
+        set_time(hour, day, 2, 24);
+        time[3] = to_string(day/10)+to_string(day%10);
+        cout << "\e[2;"+to_string(12+j)+"H"+color+time[3]+":"+time[2]+":"+time[1]+":"+time[0]+"\e[0m\n";
         time_thread.join();
         ++second;
     }
@@ -943,9 +945,9 @@ void board::notify()
      cout << "\e["+to_string(toph+15)+";"+to_string(dist)+"HR|r      ===   resume         A|a|left     ===   one step left\n";
      cout << "\e["+to_string(toph+16)+";"+to_string(dist)+"HW|w|up   ===   rotate         D|d|right    ===   one step right\n";
      cout << "\e["+to_string(toph+17)+";"+to_string(dist)+"HT|t      ===   transpose      Space|enter  ===   drop all down\n";
-     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.5\n";
+     cout << "\e[38;5;106;1m\e["+to_string(toph+19)+";"+to_string(dist)+"HTetris Game  Version 1.0.6\n";
      string str8 = "\e["+to_string(toph+20)+";"+to_string(dist)+"HYongYe <complex.invoke@gmail.com>\e[";
-     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 10/30/2013]";
+     string str9 = to_string(toph+21)+";"+to_string(dist)+"H02/20/2013 BeiJing China [Updated 11/16/2013]";
      cout << str8+str9 << endl;
 }
 
