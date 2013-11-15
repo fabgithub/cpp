@@ -295,8 +295,8 @@ max_distance& max_distance::clear()
 
 max_distance& max_distance::max_vertical_coordinate()
 {
+     col.clear();
      size_t len = 0, j, k;
-     col.assign(box.size(), 0);
      for (size_t i = 0; i != box.size(); i += 2)
      {   
           int q = box[i];
@@ -308,12 +308,14 @@ max_distance& max_distance::max_vertical_coordinate()
           if ( j == len )
           {
                ++len;
-               col[k] = p;
-               col[k+1] = q;
+               col.push_back(p);
+               col.push_back(q);
           }
-          if ( col[k+1] < q )
-               col[k+1] = q;
-          col[k] = p;
+          else 
+          {     
+               if ( col[j+1] < q ) 
+                    col[j+1] = q;
+          }
      }
      max.assign(2*len, 0);
      for (size_t i = 0; i != len; ++i)
