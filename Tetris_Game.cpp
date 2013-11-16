@@ -254,7 +254,6 @@ class piece
       void top_point(vector<int>& cur_box);
       piece& operator=(const piece&)=delete;
       void coord_comp(int&, int&, int&, int&);
-      void get_point(vector<int>&, int&, int&, int);
       void get_preview(vector<int>&, string&, int, string&);
       void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
       void pipe_piece(vector<int>&, vector<int>&, string&, int, int, string&, string&);
