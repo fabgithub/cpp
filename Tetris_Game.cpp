@@ -295,7 +295,6 @@ max_distance& max_distance::clear()
 
 max_distance& max_distance::max_vertical_coordinate()
 {
-     col.clear();
      size_t len = 0, j, k;
      for (size_t i = 0; i != box.size(); i += 2)
      {   
