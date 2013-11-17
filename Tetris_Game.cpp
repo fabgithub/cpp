@@ -139,7 +139,7 @@ int get_args(vector<string>& args)
        if ( str == "-h" || str == "--help" ) 
        {
             cout << "Usage: " << args[0] << " [runlevel] [previewlevel] [speedlevel] [width] [height]" << endl;
-            cout << "Range: [ 0 <= runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 30 ]   [ width >= 17 ]   [ height >= 10 ]" << endl;
+            cout << "Range: [ 0 <= runlevel <= 31 ]   [ previewlevel >= 1 ]   [ speedlevel <= 8 ]   [ width >= 17 ]   [ height >= 10 ]" << endl;
             return 1;
        }
        else if ( str == "-v" || str == "--version" )
