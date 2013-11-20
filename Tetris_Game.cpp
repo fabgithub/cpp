@@ -169,13 +169,13 @@ class max_distance
 {
    public:
       max_distance& clear();
-      max_distance()=default;
-      max_distance(max_distance&&)=delete;
+      max_distance() = default;
+      max_distance(max_distance&&) = delete;
       int max_height(vector<vector<int>>&);
       max_distance& max_vertical_coordinate();
-      max_distance(const max_distance&)=delete;
-      max_distance& operator=(max_distance&&)=delete;
-      max_distance& operator=(const max_distance&)=delete;
+      max_distance(const max_distance&) = delete;
+      max_distance& operator=(max_distance&&) = delete;
+      max_distance& operator=(const max_distance&) = delete;
    private:
       vector<int> max, col;
 };
@@ -184,15 +184,15 @@ class transpose
 {
    public:
       friend class piece;
-      transpose()=default;
+      transpose() = default;
       void unique(vector<int>&);
-      transpose(transpose&&)=delete;
-      transpose(const transpose&)=delete;
+      transpose(transpose&&) = delete;
       void addbox(vector<int>&, int, int);
+      transpose(const transpose&) = delete;
       tuple<int, int> mid_point(vector<int>&);
-      transpose& operator=(transpose&&)=delete;
-      transpose& operator=(const transpose&)=delete;
+      transpose& operator=(transpose&&) = delete;
       vector<int>& multiple(vector<int>&, int, int);
+      transpose& operator=(const transpose&) = delete;
       void coordinate_transformation(double, int, int);
       void abstract(vector<int>&, int&, int&, int, int);
       void optimize(vector<int>&, initializer_list<int>&&);
@@ -204,12 +204,12 @@ class get_time
 {
    public:
       void current();
-      get_time()=default;
-      get_time(get_time&&)=delete;
-      get_time(const get_time&)=delete;
-      get_time& operator=(get_time&&)=delete;
+      get_time() = default;
+      get_time(get_time&&) = delete;
+      get_time(const get_time&) = delete;
+      get_time& operator=(get_time&&) = delete;
+      get_time& operator=(const get_time&) = delete;
       void set_time(int&, int&, size_t, int value=60); 
-      get_time& operator=(const get_time&)=delete;
    private:
       int day = 0;
       int hour = 0;
@@ -240,23 +240,23 @@ class piece
       void show_piece(int);
       void shift_piece(int);
       void update(int, int);
-      piece(piece&&)=delete;
       void perplus(int, int);
+      piece(piece&&) = delete;
       vector<int>& get_piece();
       void rotate(double, int);
       int move_piece(int, int);
-      piece(const piece&)=delete;
+      piece(const piece&) = delete;
       void coordinate(vector<int>&);
       void draw_piece(int, int, int);
       void transform(double, int dy=1);
       string& get_replace(string& str);
-      piece& operator=(piece&&)=delete;
       void bomb(int x, int y, int size);
+      piece& operator=(piece&&) = delete;
       void top_point(vector<int>& cur_box);
-      piece& operator=(const piece&)=delete;
       void coord_comp(int&, int&, int&, int&);
+      piece& operator=(const piece&) = delete;
       void get_preview(vector<int>&, string&, int, string&);
-      void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int)=nullptr);
+      void loop(void (piece::*lhs)(int, int), void (piece::*rhs)(int) = nullptr);
       void pipe_piece(vector<int>&, vector<int>&, string&, int, int, string&, string&);
    private:
       board bd;
@@ -336,7 +336,7 @@ int max_distance::max_height(vector<vector<int>>& box_map)
          if ( max[j]+i == lower ) return i;
          if ( j+2 == max.size() )
          { 
-              j=-2; 
+              j = -2; 
               ++i;
          }
     }
@@ -650,7 +650,7 @@ void piece::random_piece()
      int k = height-1;
      for (int i = 0,j = 6; i != count; j += 2)
      {
-          if ( j == wthm ) { j=4; ++i; }
+          if ( j == wthm ) { j = 4; ++i; }
           if ( RANDOM()%2 ) 
           { 
                box_map[k-i][j/2-toph] = 1; 
